@@ -8,10 +8,10 @@
 import SwiftUI
 
 @main
-struct IncomeAppApp: App {
+struct IncomeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
         }
     }
 }
