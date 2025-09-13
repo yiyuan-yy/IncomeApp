@@ -8,9 +8,17 @@
 import Foundation
 
 class IncomeModelView: ObservableObject {
-    @Published var transactions: [Transaction] = []
-    var balance: Double {
-        return transactions.map{$0.number}.reduce(0.0,+)
+    @Published var transactions: [Transaction] = IncomeModelView.example
+    
+    // Computed variables to show the total balance card based on transactions
+    var balance: String {
+        return String(format: "%.2f",transactions.map{$0.number}.reduce(0.0,+))
+    }
+    var totalExpense: String {
+        return String(format: "%.2f",transactions.map{$0.number}.filter{$0<0}.reduce(0.0, -))
+    }
+    var totalIncome: String {
+        return String(format: "%.2f",transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +))
     }
     
     // Create a record
@@ -32,11 +40,11 @@ class IncomeModelView: ObservableObject {
 
 extension IncomeModelView {
     static let example: [Transaction] = [
-        Transaction(type: .expense, amount: 1.5, title: "Lunch"),
-        Transaction(type: .income, amount: 5264, title: "benefits"),
-        Transaction(type: .expense, amount: 25, title: "dinner"),
-        Transaction(type: .income, amount: 1314, title: "gift"),
-        Transaction(type: .expense, amount: 10, title: "snacks"),
+        Transaction(type: .expense, amount: 1, title: "Lunch"),
+        Transaction(type: .income, amount: 2, title: "benefits"),
+        Transaction(type: .expense, amount: 5, title: "dinner"),
+        Transaction(type: .income, amount: 10, title: "gift"),
+        Transaction(type: .expense, amount: 4, title: "snacks"),
         Transaction(type: .expense, amount: 5, title: "water expense"),
         
     ]

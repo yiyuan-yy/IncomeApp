@@ -54,24 +54,24 @@ struct HomeView: View {
     }
     
     private var overviewCard: some View{
-        VStack (spacing: 10) {
+        VStack (alignment:.leading, spacing: 10) {
             HStack {
                 Text("BALANCE")
                 Spacer()
             }
             HStack {
-                Text("ToTal Number $")
+                Text("US$ \(incomeViewModel.balance)")
                     .font(.system(size: 40))
                 Spacer()
             }
             HStack {
-                VStack{
+                VStack(alignment:.leading) {
                     Text("EXPENSE")
-                    Text("US$0.00")
+                    Text("US$\(incomeViewModel.totalExpense)")
                 }
-                VStack{
-                    Text("Income")
-                    Text("US$0.00")
+                VStack(alignment:.leading) {
+                    Text("INCOME")
+                    Text("US$\(incomeViewModel.totalIncome)")
                 }
                 Spacer()
             }
