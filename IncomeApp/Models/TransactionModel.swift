@@ -12,7 +12,7 @@ struct Transaction: Identifiable {
     var type: TransactionType = .expense
     var amount: Double = 0.0
     var title: String = ""
-    var date: Date
+    var date: Date = Date()
     var status: TransactionStatus = .completed
     
     //Mark Computed variables

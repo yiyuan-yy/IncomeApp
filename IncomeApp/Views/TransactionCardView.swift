@@ -1,0 +1,45 @@
+//
+//  TransactionCardView.swift
+//  IncomeApp
+//
+//  Created by yiyuan hu on 9/13/25.
+//
+import SwiftUI
+
+struct TransactionCardView: View {
+    let transaction: Transaction
+    var body: some View {
+        VStack {
+            // a date view
+            Text(transaction.formattedDate)
+                .font(.system(size: 20))
+                .frame(maxWidth: .infinity)
+                .frame(height: 30)
+                .background(.lightGray)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            
+            HStack {
+                VStack{
+                    Image(systemName: transaction.typeImgName)
+                        .font(.system(size:20,weight: .bold))
+                        .foregroundStyle(transaction.typeImgColor)
+                }
+                VStack {
+                    HStack{
+                        Text(transaction.title)
+                        Spacer()
+                        Text("US$\(transaction.formattedAmount)")
+                    }
+                    .font(.system(size: 20, weight: .bold))
+                    HStack{
+                        Text("\(transaction.status)")
+                        Spacer()
+                    }
+                    .font(.system(size: 20))
+                }
+            }
+            
+        }
+        .padding(.horizontal)
+    }
+}
