@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    let exampleTrans: [Transaction] = IncomeModelView.example
+    let exampleTransactions: [Transaction] = IncomeModelView.example
     
     var body: some View {
         VStack {
@@ -19,18 +19,13 @@ struct HomeView: View {
             }
             .padding(.horizontal)
             
-            // a date view
-            Text(exampleTrans[0].formattedDate)
-                .font(.system(size: 20))
-                .frame(maxWidth: .infinity)
-                .frame(height: 50)
-                .background(.lightGray)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .padding(.horizontal,40)
-                
-                
+            List (exampleTransactions) {transaction in
+                TransactionCardView(transaction: transaction)
+            }
+            .listStyle(.inset)
             
             Spacer()
+            
             addRecordButton
 
         }
@@ -102,4 +97,42 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+}
+
+struct TransactionCardView: View {
+    let transaction: Transaction
+    var body: some View {
+        VStack {
+            // a date view
+            Text(transaction.formattedDate)
+                .font(.system(size: 20))
+                .frame(maxWidth: .infinity)
+                .frame(height: 30)
+                .background(.lightGray)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            
+            HStack {
+                VStack{
+                    Image(systemName: transaction.typeImgName)
+                        .font(.system(size:20,weight: .bold))
+                        .foregroundStyle(transaction.typeImgColor)
+                }
+                VStack {
+                    HStack{
+                        Text(transaction.title)
+                        Spacer()
+                        Text("US$\(transaction.formattedAmount)")
+                    }
+                    .font(.system(size: 20, weight: .bold))
+                    HStack{
+                        Text("\(transaction.status)")
+                        Spacer()
+                    }
+                    .font(.system(size: 20))
+                }
+            }
+            
+        }
+        .padding(.horizontal)
+    }
 }

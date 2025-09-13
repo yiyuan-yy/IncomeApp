@@ -5,6 +5,7 @@
 //  Created by yiyuan hu on 9/12/25.
 //
 import Foundation
+import SwiftUICore
 
 struct Transaction: Identifiable {
     let id = UUID()
@@ -12,6 +13,7 @@ struct Transaction: Identifiable {
     var amount: Double = 0.0
     var title: String = ""
     var date: Date
+    var status: TransactionStatus = .completed
     
     //Mark Computed variables
     var number: Double{
@@ -23,8 +25,15 @@ struct Transaction: Identifiable {
         formatter.dateFormat = "yyyy-MM-dd"
 //        formatter.timeStyle = .none
         return formatter.string(from: date)
-        
     }
-    
+    var formattedAmount: String{
+        return String(format: "%.2f", amount)
+    }
+    var typeImgName: String{
+        return type == .expense ? "arrow.down.right" : "arrow.up.right"
+    }
+    var typeImgColor: Color{
+        return type == .expense ? Color.red : Color.green
+    }
 }
 
