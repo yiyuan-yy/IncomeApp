@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var incomeViewModel = IncomeModelView()
+    @State var hideOverview = false
     
     var body: some View {
         NavigationStack {
@@ -16,23 +17,12 @@ struct HomeView: View {
                 VStack {
                     settingButton
                     titleView
-                    overviewCard
+                    balanceCard
                 }
                 .padding(.horizontal)
                 
-                List{
-                    ForEach(incomeViewModel.transactions){transaction in
-                        TransactionCardView(transaction: transaction)
-                    }
-                    .onDelete {indexSet in
-                        incomeViewModel.deleteTransaction(at: indexSet)
-                    }
-                }
-                .listStyle(.inset)
-                .toolbar{
-                    EditButton()
-                }
-                
+                transactionsListView
+               
                 Spacer()
                 
                 addRecordButton
@@ -43,8 +33,25 @@ struct HomeView: View {
             }
             .navigationTitle("Income")
             .toolbar(.hidden, for: .navigationBar)
+            .animation(.spring, value: hideOverview)
         
         }
+    }
+    
+    private var transactionsListView: some View{
+        List{
+            ForEach(incomeViewModel.transactions){transaction in
+                TransactionCardView(transaction: transaction)
+            }
+            .onDelete {indexSet in
+                incomeViewModel.deleteTransaction(at: indexSet)
+            }
+        }
+        .listStyle(.inset)
+        .toolbar{
+            EditButton()
+        }
+        
     }
     
     private var addRecordButton: some View{
@@ -61,11 +68,48 @@ struct HomeView: View {
         }
     }
     
+    private var balanceCard: some View{
+        VStack{
+            if hideOverview {
+                hiddenOverviewCard
+            }
+            if !hideOverview {
+                overviewCard
+            }
+        }
+    }
+    
+    private var hiddenOverviewCard: some View{
+        VStack {
+            HStack {
+                Text("BALANCE US$\(incomeViewModel.balance)")
+                Spacer()
+                Button {
+                    hideOverview = false
+                } label: {
+                    Image(systemName: "eye")
+                }
+            }
+        }
+        .foregroundStyle(.white)
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Color.primaryTheme)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .shadow(radius: 8)
+        
+    }
+    
     private var overviewCard: some View{
         VStack (alignment:.leading, spacing: 10) {
             HStack {
                 Text("BALANCE")
                 Spacer()
+                Button {
+                    hideOverview = true
+                } label: {
+                    Image(systemName: "eye.slash")
+                }
             }
             HStack {
                 Text("US$ \(incomeViewModel.balance)")
