@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
+    let exampleTrans: [Transaction] = IncomeModelView.example
+    
     var body: some View {
         VStack {
             VStack {
@@ -17,7 +19,34 @@ struct HomeView: View {
             }
             .padding(.horizontal)
             
+            // a date view
+            Text(exampleTrans[0].formattedDate)
+                .font(.system(size: 20))
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+                .background(.lightGray)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .padding(.horizontal,40)
+                
+                
+            
             Spacer()
+            addRecordButton
+
+        }
+    }
+    
+    private var addRecordButton: some View{
+        HStack{
+            Button {
+                
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .symbolRenderingMode(.palette)
+                    .font(.system(size: 70, weight: .thin))
+                    .foregroundStyle(.white, .primaryTheme)
+                    .shadow(color: .primaryTheme, radius: 3)
+            }
         }
     }
     
