@@ -20,10 +20,18 @@ struct HomeView: View {
                 }
                 .padding(.horizontal)
                 
-                List (IncomeModelView.example) {transaction in
-                    TransactionCardView(transaction: transaction)
+                List{
+                    ForEach(incomeViewModel.transactions){transaction in
+                        TransactionCardView(transaction: transaction)
+                    }
+                    .onDelete {indexSet in
+                        incomeViewModel.deleteTransaction(at: indexSet)
+                    }
                 }
                 .listStyle(.inset)
+                .toolbar{
+                    EditButton()
+                }
                 
                 Spacer()
                 

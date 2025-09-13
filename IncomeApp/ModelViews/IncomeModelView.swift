@@ -28,6 +28,11 @@ class IncomeModelView: ObservableObject {
     
     // Navigation controls
     @Published var showCreatePage = false
+    
+    // Delete a record
+    func deleteTransaction(at offsets: IndexSet){
+        transactions.remove(atOffsets: offsets)
+    }
 //    @Published var date: Date = Date()
 //    
 //    func addRecord(){
