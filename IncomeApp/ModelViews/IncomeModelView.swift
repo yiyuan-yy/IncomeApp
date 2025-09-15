@@ -21,23 +21,49 @@ class IncomeModelView: ObservableObject {
         return String(format: "%.2f",transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +))
     }
     
-    // Create a record
-    @Published var type: TransactionType = .expense
-    @Published var amount: Double = 0.0
-    @Published var title: String = ""
     
     // Navigation controls
     @Published var showCreatePage = false
+    
+    // Create a record
+    @Published var type: TransactionType = .expense
+    @Published var amount: Double? = nil
+    var formattedAmount: String{
+        return String(format: "%.2f", amount ?? 0.0)
+    }
+    
+    @Published var title: String = ""
+    @Published var showCreateAlert = false
+    @Published var alertMessage = ""
+    
+    func validateCreation() -> Bool{
+        if amount == nil{
+            showCreateAlert = true
+            alertMessage = "Amount should not be empty!"
+            return false
+        } else if title == "" {
+            showCreateAlert = true
+            alertMessage = "Title should not be empty!"
+            return false
+        } else {
+            showCreateAlert = false
+            return true
+        }
+    }
+    
+    func createTransaction(){
+        if  validateCreation() {
+            transactions.append(Transaction(type: type, amount: amount ?? 0.0, title: title))
+            // navigate back to home page
+            showCreatePage = false
+        }
+    }
     
     // Delete a record
     func deleteTransaction(at offsets: IndexSet){
         transactions.remove(atOffsets: offsets)
     }
-//    @Published var date: Date = Date()
-//    
-//    func addRecord(){
-//        transactions.append(Transaction(type: type, amount: amount, title: title, date: date))
-//    }
+    
     // Update a record
     
 }

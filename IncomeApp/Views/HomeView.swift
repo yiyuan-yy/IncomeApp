@@ -61,7 +61,7 @@ struct HomeView: View {
             } label: {
                 Image(systemName: "plus.circle.fill")
                     .symbolRenderingMode(.palette)
-                    .font(.system(size: 70, weight: .thin))
+                    .font(Fonts.addButtonImg)
                     .foregroundStyle(.white, .primaryTheme)
                     .shadow(color: .primaryTheme, radius: 3)
             }
@@ -113,7 +113,7 @@ struct HomeView: View {
             }
             HStack {
                 Text("US$ \(incomeViewModel.balance)")
-                    .font(.system(size: 40))
+                    .font(Fonts.dollarSign)
                 Spacer()
             }
             HStack {
@@ -139,7 +139,7 @@ struct HomeView: View {
     private var titleView: some View{
         HStack {
             Text("Income")
-                .font(.system(size: 30, weight: .heavy))
+                .font(Fonts.title)
             Spacer()
             
         }
@@ -149,7 +149,7 @@ struct HomeView: View {
         HStack {
             Spacer()
             Image(systemName: "gearshape.fill")
-                .font(.system(size: 20))
+                .font(Fonts.subtitle)
         }
     }
     
