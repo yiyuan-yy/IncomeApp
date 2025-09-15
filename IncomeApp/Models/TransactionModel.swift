@@ -13,21 +13,20 @@ struct Transaction: Identifiable {
     var amount: Double? = nil
     var title: String = ""
     var date: Date = Date()
-    var status: TransactionStatus = .completed
-    
-    //Mark Computed variables
+}
+
+//Mark Computed variables
+extension Transaction {
     var number: Double{
         return  type == .expense ? (amount ?? 0.0) * -1 : (amount ?? 0.0)
     }
     var formattedDate: String{
         let formatter = DateFormatter()
-//        formatter.dateStyle = .medium
         formatter.dateFormat = "yyyy-MM-dd"
-//        formatter.timeStyle = .none
         return formatter.string(from: date)
     }
     var formattedAmount: String{
-        return String(format: "%.2f", amount ?? 0.0)
+        return String( (amount ?? 0.0).formatted(.currency(code: "USD")) )
     }
     var typeImgName: String{
         return type == .expense ? "arrow.down.right" : "arrow.up.right"
