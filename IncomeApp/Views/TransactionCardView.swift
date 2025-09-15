@@ -12,7 +12,7 @@ struct TransactionCardView: View {
         VStack {
             // a date view
             Text(transaction.formattedDate)
-                .font(Fonts.body)
+                .font(Constants.FontSize.body)
                 .frame(maxWidth: .infinity)
                 .frame(height: 30)
                 .background(.lightGrayTheme)
@@ -21,21 +21,20 @@ struct TransactionCardView: View {
             HStack {
                 VStack{
                     Image(systemName: transaction.typeImgName)
-                        .font(Fonts.subtitle)
+                        .font(Constants.FontSize.subtitle)
                         .foregroundStyle(transaction.typeImgColor)
                 }
                 VStack {
                     HStack{
                         Text(transaction.title)
                         Spacer()
-                        Text("US$\(transaction.formattedAmount)")
+                        Text("US\(transaction.formattedAmount)")
+                            
                     }
-                    .font(Fonts.subtitle)
-                    HStack{
-                        Text("\(transaction.status)")
-                        Spacer()
-                    }
-                    .font(Fonts.body)
+                    .font(Constants.FontSize.subtitle)
+                    .lineLimit(1)
+                    .minimumScaleFactor(Constants.ScaleFactor.textShrink)
+                    .truncationMode(.tail)
                 }
             }
             

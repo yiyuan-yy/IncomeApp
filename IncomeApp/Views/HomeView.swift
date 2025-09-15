@@ -66,7 +66,7 @@ struct HomeView: View {
             } label: {
                 Image(systemName: "plus.circle.fill")
                     .symbolRenderingMode(.palette)
-                    .font(Fonts.addButtonImg)
+                    .font(Constants.FontSize.addButtonImg)
                     .foregroundStyle(.white, .primaryTheme)
                     .shadow(color: .primaryTheme, radius: 3)
             }
@@ -88,6 +88,7 @@ struct HomeView: View {
         VStack {
             HStack {
                 Text("BALANCE US\(incomeViewModel.balance)")
+                    .minimumScaleFactor(Constants.ScaleFactor.textShrink)
                 Spacer()
                 Button {
                     hideOverview = false
@@ -118,17 +119,26 @@ struct HomeView: View {
             }
             HStack {
                 Text("US \(incomeViewModel.balance)")
-                    .font(Fonts.dollarSign)
+                    .font(Constants.FontSize.dollarSign)
+                    .lineLimit(1)
+                    .minimumScaleFactor(Constants.ScaleFactor.textShrink)
+                    .truncationMode(.tail)
                 Spacer()
             }
             HStack {
                 VStack(alignment:.leading) {
                     Text("EXPENSE")
                     Text("US\(incomeViewModel.totalExpense)")
+                        .lineLimit(1)
+                        .minimumScaleFactor(Constants.ScaleFactor.textShrink)
+                        .truncationMode(.tail)
                 }
                 VStack(alignment:.leading) {
                     Text("INCOME")
                     Text("US\(incomeViewModel.totalIncome)")
+                        .lineLimit(1)
+                        .minimumScaleFactor(Constants.ScaleFactor.textShrink)
+                        .truncationMode(.tail)
                 }
                 Spacer()
             }
@@ -144,7 +154,7 @@ struct HomeView: View {
     private var titleView: some View{
         HStack {
             Text("Income")
-                .font(Fonts.title)
+                .font(Constants.FontSize.title)
             Spacer()
             
         }
@@ -154,7 +164,7 @@ struct HomeView: View {
         HStack {
             Spacer()
             Image(systemName: "gearshape.fill")
-                .font(Fonts.subtitle)
+                .font(Constants.FontSize.subtitle)
         }
     }
     

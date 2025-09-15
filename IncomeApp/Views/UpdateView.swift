@@ -10,13 +10,13 @@ import SwiftUI
 
 struct UpdateView: View {
     @ObservedObject var incomeViewModel: TransactionViewModel
-    let transactionId: UUID
+    let transaction: Transaction
     @State private var draft: Transaction
     @Environment(\.dismiss) private var dismiss
     
     init(incomeViewModel: TransactionViewModel, transaction: Transaction) {
         self.incomeViewModel = incomeViewModel
-        self.transactionId = transaction.id
+        self.transaction = transaction
         self._draft = State(initialValue: transaction)
     }
    
@@ -38,14 +38,14 @@ struct UpdateView: View {
             
         }
         .padding()
-        .alert("", isPresented: $incomeViewModel.showUpdateAlert) {
+        .alert("", isPresented: $incomeViewModel.showCreateAlert) {
             Button {
-                incomeViewModel.showUpdateAlert = false
+                incomeViewModel.showCreateAlert = false
             } label: {
                 Text("OK")
             }
         } message: {
-            Text(incomeViewModel.updateAlertMessage)
+            Text(incomeViewModel.alertMessage)
         }
 
     }
@@ -57,7 +57,7 @@ struct UpdateView: View {
                 .foregroundStyle(.white.opacity(0))
                 .overlay{
                     TextField("", value:  $draft.amount, format: .number.grouping(.automatic))
-                    .minimumScaleFactor(0.1)
+                    .minimumScaleFactor(Constants.ScaleFactor.textShrink)
                     .textFieldStyle(.plain)
                     .keyboardType(.numberPad)
                     .textInputAutocapitalization(.never)
@@ -65,7 +65,7 @@ struct UpdateView: View {
                     .lineLimit(1)
                 }
         }
-        .font(Fonts.big)
+        .font(Constants.FontSize.big)
         .frame(maxWidth: .infinity)
         .frame(maxHeight: 30)
     }
@@ -73,7 +73,9 @@ struct UpdateView: View {
     private var updateButton: some View{
         // Create button
         Button {
-            
+            if incomeViewModel.updateTransaction(old: transaction, new: draft) {
+                dismiss()
+            }
         } label: {
             Text("Update")
                 .font(.system(size: 20))

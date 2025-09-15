@@ -48,7 +48,7 @@ struct CreateView: View {
                 .foregroundStyle(.white.opacity(0))
                 .overlay{
                     TextField("", value:  $draft.amount, format: .number.grouping(.automatic))
-                    .minimumScaleFactor(0.1)
+                        .minimumScaleFactor(Constants.ScaleFactor.textShrink)
                     .textFieldStyle(.plain)
                     .keyboardType(.numberPad)
                     .textInputAutocapitalization(.never)
@@ -56,7 +56,7 @@ struct CreateView: View {
                     .lineLimit(1)
                 }
         }
-        .font(Fonts.big)
+        .font(Constants.FontSize.big)
         .frame(maxWidth: .infinity)
         .frame(maxHeight: 30)
     }

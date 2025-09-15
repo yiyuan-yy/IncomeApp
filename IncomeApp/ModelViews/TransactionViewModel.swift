@@ -24,6 +24,11 @@ class TransactionViewModel: ObservableObject {
         return transactions.sorted{ $0.date > $1.date}
     }
     
+    // Subscript
+    private func index(of id: Transaction.ID) -> Int? {
+        transactions.firstIndex(where: {$0.id == id})
+    }
+    
     // Navigation controls
     @Published var showCreatePage = false
     @Published var showUpdatePage = false
@@ -32,7 +37,7 @@ class TransactionViewModel: ObservableObject {
     @Published var showCreateAlert = false
     @Published var alertMessage = ""
     
-    func validateCreation(_ transaction: Transaction) -> Bool{
+    func validate(_ transaction: Transaction) -> Bool{
         guard let amount = transaction.amount else {
             showCreateAlert = true
             alertMessage = "Amount should not be empty!"
@@ -48,12 +53,13 @@ class TransactionViewModel: ObservableObject {
             return false
         } else {
             showCreateAlert = false
+            alertMessage = ""
             return true
         }
     }
     
     func createTransaction(_ transaction: Transaction){
-        if  validateCreation(transaction) {
+        if  validate(transaction) {
             transactions.append(transaction)
             // navigate back to home page
             showCreatePage = false
@@ -65,10 +71,17 @@ class TransactionViewModel: ObservableObject {
         transactions.removeAll{$0.id == transaction.id}
     }
     // Update a record
-//    @Published var newTransaction: Transaction? = nil
-    @Published var showUpdateAlert = false
-    @Published var updateAlertMessage = ""
-    
+    func updateTransaction(old: Transaction, new: Transaction) -> Bool{
+        if  validate(old) {
+            if let index = index(of: old.id){
+                transactions[index] = new
+                return true
+            } else {
+                return false
+            }
+        }
+        return false
+    }
 }
 
 
