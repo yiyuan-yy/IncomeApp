@@ -40,11 +40,14 @@ struct HomeView: View {
     
     private var transactionsListView: some View{
         List{
-            ForEach(incomeViewModel.transactions){transaction in
+            ForEach(incomeViewModel.sortedTransactions){transaction in
                 TransactionCardView(transaction: transaction)
             }
             .onDelete {indexSet in
-                incomeViewModel.deleteTransaction(at: indexSet)
+                for index in indexSet {
+                    let toDelete = incomeViewModel.sortedTransactions[index]
+                    incomeViewModel.deleteTransaction(toDelete)
+                }
             }
         }
         .listStyle(.inset)

@@ -8,7 +8,7 @@
 import Foundation
 
 class IncomeModelView: ObservableObject {
-    @Published var transactions: [Transaction] = IncomeModelView.example
+    @Published private(set) var transactions: [Transaction] = IncomeModelView.example
     
     // Computed variables to show the total balance card based on transactions
     var balance: String {
@@ -19,6 +19,9 @@ class IncomeModelView: ObservableObject {
     }
     var totalIncome: String {
         return String(format: "%.2f",transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +))
+    }
+    var sortedTransactions: [Transaction]{
+        return transactions.sorted{ $0.date > $1.date}
     }
     
     
@@ -60,10 +63,9 @@ class IncomeModelView: ObservableObject {
     }
     
     // Delete a record
-    func deleteTransaction(at offsets: IndexSet){
-        transactions.remove(atOffsets: offsets)
+    func deleteTransaction(_ transaction: Transaction){
+        transactions.removeAll{$0.id == transaction.id}
     }
-    
     // Update a record
     
 }
