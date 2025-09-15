@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject var incomeViewModel = IncomeModelView()
+    @StateObject var incomeViewModel = TransactionViewModel()
     @State var hideOverview = false
     
     var body: some View {
@@ -29,7 +29,7 @@ struct HomeView: View {
                 
             }
             .navigationDestination(isPresented: $incomeViewModel.showCreatePage) {
-                CreateTransactionView(incomeViewModel: incomeViewModel)
+                CreateView(incomeViewModel: incomeViewModel)
             }
             .navigationTitle("Income")
             .toolbar(.hidden, for: .navigationBar)
@@ -41,7 +41,9 @@ struct HomeView: View {
     private var transactionsListView: some View{
         List{
             ForEach(incomeViewModel.sortedTransactions){transaction in
-                TransactionCardView(transaction: transaction)
+                NavigationLink(destination: UpdateView(incomeViewModel: incomeViewModel, transaction: transaction)) {
+                    TransactionCardView(transaction: transaction)
+                }
             }
             .onDelete {indexSet in
                 for index in indexSet {
@@ -85,7 +87,7 @@ struct HomeView: View {
     private var hiddenOverviewCard: some View{
         VStack {
             HStack {
-                Text("BALANCE US$\(incomeViewModel.balance)")
+                Text("BALANCE US\(incomeViewModel.balance)")
                 Spacer()
                 Button {
                     hideOverview = false
@@ -115,18 +117,18 @@ struct HomeView: View {
                 }
             }
             HStack {
-                Text("US$ \(incomeViewModel.balance)")
+                Text("US \(incomeViewModel.balance)")
                     .font(Fonts.dollarSign)
                 Spacer()
             }
             HStack {
                 VStack(alignment:.leading) {
                     Text("EXPENSE")
-                    Text("US$\(incomeViewModel.totalExpense)")
+                    Text("US\(incomeViewModel.totalExpense)")
                 }
                 VStack(alignment:.leading) {
                     Text("INCOME")
-                    Text("US$\(incomeViewModel.totalIncome)")
+                    Text("US\(incomeViewModel.totalIncome)")
                 }
                 Spacer()
             }

@@ -15,7 +15,7 @@ struct TransactionCardView: View {
                 .font(Fonts.body)
                 .frame(maxWidth: .infinity)
                 .frame(height: 30)
-                .background(.lightGray)
+                .background(.lightGrayTheme)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             
             HStack {

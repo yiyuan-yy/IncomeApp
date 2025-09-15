@@ -7,44 +7,42 @@
 
 import Foundation
 
-class IncomeModelView: ObservableObject {
-    @Published private(set) var transactions: [Transaction] = IncomeModelView.example
+class TransactionViewModel: ObservableObject {
+    @Published private(set) var transactions: [Transaction] = TransactionViewModel.example
     
     // Computed variables to show the total balance card based on transactions
     var balance: String {
-        return String(format: "%.2f",transactions.map{$0.number}.reduce(0.0,+))
+        return String(transactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: "USD")))
     }
     var totalExpense: String {
-        return String(format: "%.2f",transactions.map{$0.number}.filter{$0<0}.reduce(0.0, -))
+        return String(transactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: "USD")))
     }
     var totalIncome: String {
-        return String(format: "%.2f",transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +))
+        return String(transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: "USD")))
     }
     var sortedTransactions: [Transaction]{
         return transactions.sorted{ $0.date > $1.date}
     }
     
-    
     // Navigation controls
     @Published var showCreatePage = false
+    @Published var showUpdatePage = false
     
     // Create a record
-    @Published var type: TransactionType = .expense
-    @Published var amount: Double? = nil
-    var formattedAmount: String{
-        return String(format: "%.2f", amount ?? 0.0)
-    }
-    
-    @Published var title: String = ""
     @Published var showCreateAlert = false
     @Published var alertMessage = ""
     
-    func validateCreation() -> Bool{
-        if amount == nil{
+    func validateCreation(_ transaction: Transaction) -> Bool{
+        guard let amount = transaction.amount else {
             showCreateAlert = true
             alertMessage = "Amount should not be empty!"
             return false
-        } else if title == "" {
+        }
+        if amount == 0.0{
+            showCreateAlert = true
+            alertMessage = "Amount should not be empty!"
+            return false
+        } else if transaction.title == "" {
             showCreateAlert = true
             alertMessage = "Title should not be empty!"
             return false
@@ -54,9 +52,9 @@ class IncomeModelView: ObservableObject {
         }
     }
     
-    func createTransaction(){
-        if  validateCreation() {
-            transactions.append(Transaction(type: type, amount: amount ?? 0.0, title: title))
+    func createTransaction(_ transaction: Transaction){
+        if  validateCreation(transaction) {
+            transactions.append(transaction)
             // navigate back to home page
             showCreatePage = false
         }
@@ -67,11 +65,14 @@ class IncomeModelView: ObservableObject {
         transactions.removeAll{$0.id == transaction.id}
     }
     // Update a record
+//    @Published var newTransaction: Transaction? = nil
+    @Published var showUpdateAlert = false
+    @Published var updateAlertMessage = ""
     
 }
 
 
-extension IncomeModelView {
+extension TransactionViewModel {
     static let example: [Transaction] = [
         Transaction(type: .expense, amount: 1, title: "Lunch"),
         Transaction(type: .income, amount: 2, title: "benefits"),

@@ -10,14 +10,14 @@ import SwiftUICore
 struct Transaction: Identifiable {
     let id = UUID()
     var type: TransactionType = .expense
-    var amount: Double = 0.0
+    var amount: Double? = nil
     var title: String = ""
     var date: Date = Date()
     var status: TransactionStatus = .completed
     
     //Mark Computed variables
     var number: Double{
-        return  type == .expense ? amount * -1 : amount
+        return  type == .expense ? (amount ?? 0.0) * -1 : (amount ?? 0.0)
     }
     var formattedDate: String{
         let formatter = DateFormatter()
@@ -27,7 +27,7 @@ struct Transaction: Identifiable {
         return formatter.string(from: date)
     }
     var formattedAmount: String{
-        return String(format: "%.2f", amount)
+        return String(format: "%.2f", amount ?? 0.0)
     }
     var typeImgName: String{
         return type == .expense ? "arrow.down.right" : "arrow.up.right"

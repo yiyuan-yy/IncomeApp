@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct CreateTransactionView: View {
-    @ObservedObject var incomeViewModel: IncomeModelView
-    @State var textWidth: CGFloat = 20
+struct CreateView: View {
+    @ObservedObject var incomeViewModel: TransactionViewModel
+    @State private var draft: Transaction = Transaction()
     
     var body: some View {
         VStack(spacing: 30) {
@@ -18,11 +18,11 @@ struct CreateTransactionView: View {
 
             Divider()
                 .frame(height: 2)       // thickness
-                .background(.lightGray)
+                .background(.lightGrayTheme)
                 
             typePicker
 
-            TextField("Title", text: $incomeViewModel.title)
+            TextField("Title", text: $draft.title)
                 .textFieldStyle(.roundedBorder)
             
             submitButton
@@ -44,10 +44,10 @@ struct CreateTransactionView: View {
     private var amountField: some View{
         HStack {
             Text("US$")
-            Text(String(incomeViewModel.amount ?? 0.0))
+            Text(String(draft.amount ?? 0.0))
                 .foregroundStyle(.white.opacity(0))
                 .overlay{
-                    TextField("", value: $incomeViewModel.amount, format: .number.grouping(.automatic))
+                    TextField("", value:  $draft.amount, format: .number.grouping(.automatic))
                     .minimumScaleFactor(0.1)
                     .textFieldStyle(.plain)
                     .keyboardType(.numberPad)
@@ -64,7 +64,7 @@ struct CreateTransactionView: View {
     private var submitButton: some View{
         // Create button
         Button {
-            incomeViewModel.createTransaction()
+            incomeViewModel.createTransaction(draft)
         } label: {
             Text("Create")
                 .font(.system(size: 20))
@@ -75,7 +75,7 @@ struct CreateTransactionView: View {
     }
     
     private var typePicker: some View {
-        Picker("", selection: $incomeViewModel.type) {
+        Picker("", selection: $draft.type) {
             ForEach(TransactionType.allCases){type in
                 Text(type.rawValue)
                   
@@ -85,6 +85,7 @@ struct CreateTransactionView: View {
     }
 }
 
+
 #Preview {
-    CreateTransactionView(incomeViewModel: IncomeModelView())
+    CreateView(incomeViewModel: TransactionViewModel())
 }
