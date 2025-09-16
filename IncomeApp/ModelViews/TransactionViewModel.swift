@@ -24,6 +24,15 @@ class TransactionViewModel: ObservableObject {
         return transactions.sorted{ $0.date > $1.date}
     }
     
+    // Transaction List
+    var sortedDateKeys: [String]{
+        return Array(transactions.sorted{$0.date > $1.date}.map { $0.formattedDate }).uniqued()
+    }
+    
+    func transactionsInDate(in date: String) -> [Transaction]?{
+        return transactions.filter{$0.formattedDate == date }.sorted{$0.date>$1.date}
+    }
+    
     // Subscript
     private func index(of id: Transaction.ID) -> Int? {
         transactions.firstIndex(where: {$0.id == id})
@@ -67,9 +76,14 @@ class TransactionViewModel: ObservableObject {
     }
     
     // Delete a record
-    func deleteTransaction(_ transaction: Transaction){
-        transactions.removeAll{$0.id == transaction.id}
+    func deleteTransaction(at offsets: IndexSet, in dateKey: String){
+        guard let transactionInSection = transactionsInDate(in: dateKey) else {return}
+        for index in offsets {
+            let toDelete = transactionInSection[index]
+            transactions.removeAll{$0.id == toDelete.id}
+        }
     }
+    
     // Update a record
     func updateTransaction(old: Transaction, new: Transaction) -> Bool{
         if  validate(old) {
@@ -96,3 +110,4 @@ extension TransactionViewModel {
         
     ]
 }
+

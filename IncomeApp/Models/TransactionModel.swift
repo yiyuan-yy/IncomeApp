@@ -21,9 +21,11 @@ extension Transaction {
         return  type == .expense ? (amount ?? 0.0) * -1 : (amount ?? 0.0)
     }
     var formattedDate: String{
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: date)
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "yyyy-MM-dd"
+//        return formatter.string(from: date)
+        return date.formatted(date: .abbreviated, time: .omitted)
+        
     }
     var formattedAmount: String{
         return String( (amount ?? 0.0).formatted(.currency(code: "USD")) )

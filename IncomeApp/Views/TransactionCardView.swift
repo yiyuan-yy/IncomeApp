@@ -10,14 +10,6 @@ struct TransactionCardView: View {
     let transaction: Transaction
     var body: some View {
         VStack {
-            // a date view
-            Text(transaction.formattedDate)
-                .font(Constants.FontSize.body)
-                .frame(maxWidth: .infinity)
-                .frame(height: 30)
-                .background(.lightGrayTheme)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-            
             HStack {
                 VStack{
                     Image(systemName: transaction.typeImgName)

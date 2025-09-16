@@ -34,21 +34,21 @@ struct HomeView: View {
             .navigationTitle("Income")
             .toolbar(.hidden, for: .navigationBar)
             .animation(.spring, value: hideOverview)
-        
         }
     }
     
     private var transactionsListView: some View{
         List{
-            ForEach(incomeViewModel.sortedTransactions){transaction in
-                NavigationLink(destination: UpdateView(incomeViewModel: incomeViewModel, transaction: transaction)) {
-                    TransactionCardView(transaction: transaction)
-                }
-            }
-            .onDelete {indexSet in
-                for index in indexSet {
-                    let toDelete = incomeViewModel.sortedTransactions[index]
-                    incomeViewModel.deleteTransaction(toDelete)
+            ForEach(incomeViewModel.sortedDateKeys, id: \.self){key in
+                Section (header: dateInList(key) ){
+                    ForEach(incomeViewModel.transactionsInDate(in: key) ?? []){transaction in
+                        NavigationLink(destination: UpdateView(incomeViewModel: incomeViewModel, transaction: transaction)) {
+                            TransactionCardView(transaction: transaction)
+                        }
+                    }
+                    .onDelete { indexSet in
+                        incomeViewModel.deleteTransaction(at: indexSet, in: key)
+                    }
                 }
             }
         }
@@ -56,7 +56,16 @@ struct HomeView: View {
         .toolbar{
             EditButton()
         }
-        
+    }
+    
+    private func dateInList(_ date: String) -> some View{
+        // a date view
+        Text(date)
+            .font(Constants.FontSize.body)
+            .frame(maxWidth: .infinity)
+            .frame(height: 30)
+            .background(.lightGrayTheme)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
     }
     
     private var addRecordButton: some View{
