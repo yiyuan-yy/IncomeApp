@@ -15,7 +15,7 @@ struct HomeView: View {
         NavigationStack {
             VStack {
                 VStack {
-                    settingButton
+                    FilterView
                     titleView
                     balanceCard
                 }
@@ -169,11 +169,21 @@ struct HomeView: View {
         }
     }
     
-    private var settingButton: some View{
+    private var FilterView: some View{
         HStack {
             Spacer()
-            Image(systemName: "gearshape.fill")
-                .font(Constants.FontSize.subtitle)
+            Text(incomeViewModel.filterType.name)
+                .foregroundStyle(.blue)
+            Menu {
+                Picker("", selection: $incomeViewModel.filterType) {
+                    ForEach(DateFilterType.allCases){type in
+                        Text(type.name)
+                    }
+                }
+            } label: {
+                Image(systemName: "line.3.horizontal.decrease")
+                    .font(Constants.FontSize.subtitle)
+            }
         }
     }
     

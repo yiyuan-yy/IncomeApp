@@ -8,7 +8,13 @@
 import Foundation
 
 class TransactionViewModel: ObservableObject {
-    @Published private(set) var transactions: [Transaction] = TransactionViewModel.example
+    @Published private(set) var allTransactions: [Transaction] = TransactionViewModel.example
+    
+    // filtered transactions by date
+    @Published var filterType: DateFilterType = .thisMonth
+    var transactions: [Transaction] {
+        return allTransactions.filter{filterType.shouldInclude(date: $0.date)}
+    }
     
     // Computed variables to show the total balance card based on transactions
     var balance: String {
@@ -31,11 +37,6 @@ class TransactionViewModel: ObservableObject {
     
     func transactionsInDate(in date: String) -> [Transaction]?{
         return transactions.filter{$0.formattedDate == date }.sorted{$0.date>$1.date}
-    }
-    
-    // Subscript
-    private func index(of id: Transaction.ID) -> Int? {
-        transactions.firstIndex(where: {$0.id == id})
     }
     
     // Navigation controls
@@ -69,7 +70,7 @@ class TransactionViewModel: ObservableObject {
     
     func createTransaction(_ transaction: Transaction){
         if  validate(transaction) {
-            transactions.append(transaction)
+            allTransactions.append(transaction)
             // navigate back to home page
             showCreatePage = false
         }
@@ -80,15 +81,20 @@ class TransactionViewModel: ObservableObject {
         guard let transactionInSection = transactionsInDate(in: dateKey) else {return}
         for index in offsets {
             let toDelete = transactionInSection[index]
-            transactions.removeAll{$0.id == toDelete.id}
+            allTransactions.removeAll{$0.id == toDelete.id}
         }
+    }
+    
+    // Subscript
+    private func index(of id: Transaction.ID) -> Int? {
+        allTransactions.firstIndex(where: {$0.id == id})
     }
     
     // Update a record
     func updateTransaction(old: Transaction, new: Transaction) -> Bool{
         if  validate(old) {
             if let index = index(of: old.id){
-                transactions[index] = new
+                allTransactions[index] = new
                 return true
             } else {
                 return false
