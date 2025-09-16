@@ -28,11 +28,17 @@ struct UpdateView: View {
             Divider()
                 .frame(height: 2)       // thickness
                 .background(.lightGrayTheme)
-                
-            TypePickerView(draft: $draft)
+            
+            HStack {
+                TypePickerView(draft: $draft)
+                DatePicker("", selection: $draft.date, displayedComponents: .date)
+                    .datePickerStyle(.compact)
+            }
 
             TextField("Title", text: $draft.title)
+                .padding(.vertical)
                 .textFieldStyle(.roundedBorder)
+                .font(Constants.FontSize.subtitle)
             
             SubmitButtonView(label: "Update") {
                 if incomeViewModel.updateTransaction(old: transaction, new: draft) {
