@@ -7,9 +7,19 @@
 
 import SwiftUI
 
-struct CreateView: View {
+struct EditView: View {
     @ObservedObject var incomeViewModel: TransactionViewModel
     @State private var draft: Transaction = Transaction()
+    var transactionToEdit: Transaction? = nil
+    @Environment(\.dismiss) private var dismiss
+    
+    init(incomeViewModel: TransactionViewModel, transactionToEdit: Transaction?) {
+        self.incomeViewModel = incomeViewModel
+        if let transaction = transactionToEdit{
+            self.transactionToEdit = transaction
+            self._draft = State(initialValue: transaction)
+        }
+    }
     
     var body: some View {
         VStack(spacing: 30) {
@@ -31,9 +41,17 @@ struct CreateView: View {
                 .padding(.vertical)
                 .textFieldStyle(.roundedBorder)
                 .font(Constants.FontSize.subtitle)
-
-            SubmitButtonView(label: "Create") {
-                incomeViewModel.createTransaction(draft)
+            
+            if let old = transactionToEdit{
+                SubmitButtonView(label: "Update") {
+                    if incomeViewModel.updateTransaction(old: old, new: draft) {
+                        dismiss()
+                    }
+                }
+            } else {
+                SubmitButtonView(label: "Create") {
+                    incomeViewModel.createTransaction(draft)
+                }
             }
             
         }
@@ -46,5 +64,5 @@ struct CreateView: View {
 
 
 #Preview {
-    CreateView(incomeViewModel: TransactionViewModel())
+    EditView(incomeViewModel: TransactionViewModel(), transactionToEdit: Transaction())
 }

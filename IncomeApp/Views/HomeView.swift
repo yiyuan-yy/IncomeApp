@@ -25,7 +25,7 @@ struct HomeView: View {
                 
             }
             .navigationDestination(isPresented: $incomeViewModel.showCreatePage) {
-                CreateView(incomeViewModel: incomeViewModel)
+                EditView(incomeViewModel: incomeViewModel, transactionToEdit: nil)
             }
             .navigationTitle("Income")
             .toolbar{
@@ -42,7 +42,7 @@ struct HomeView: View {
             ForEach(incomeViewModel.sortedDateKeys, id: \.self){key in
                 Section (header: dateInList(key) ){
                     ForEach(incomeViewModel.transactionsInDate(in: key) ?? []){transaction in
-                        NavigationLink(destination: UpdateView(incomeViewModel: incomeViewModel, transaction: transaction)) {
+                        NavigationLink(destination: EditView(incomeViewModel: incomeViewModel, transactionToEdit: transaction)) {
                             TransactionCardView(transaction: transaction)
                         }
                     }
