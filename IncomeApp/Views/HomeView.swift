@@ -14,12 +14,8 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                VStack {
-                    FilterView
-                    titleView
-                    balanceCard
-                }
-                .padding(.horizontal)
+                balanceCard
+                    .padding(.horizontal)
                 
                 transactionsListView
                
@@ -32,7 +28,11 @@ struct HomeView: View {
                 CreateView(incomeViewModel: incomeViewModel)
             }
             .navigationTitle("Income")
-            .toolbar(.hidden, for: .navigationBar)
+            .toolbar{
+                ToolbarItem {
+                    FilterView
+                }
+            }
             .animation(.spring, value: hideOverview)
         }
     }
@@ -53,9 +53,6 @@ struct HomeView: View {
             }
         }
         .listStyle(.inset)
-        .toolbar{
-            EditButton()
-        }
     }
     
     private func dateInList(_ date: String) -> some View{
@@ -134,7 +131,7 @@ struct HomeView: View {
                     .truncationMode(.tail)
                 Spacer()
             }
-            HStack {
+            HStack(spacing: 25) {
                 VStack(alignment:.leading) {
                     Text("EXPENSE")
                     Text("US\(incomeViewModel.totalExpense)")
@@ -160,14 +157,6 @@ struct HomeView: View {
         .shadow(radius: 8)
     }
     
-    private var titleView: some View{
-        HStack {
-            Text("Income")
-                .font(Constants.FontSize.title)
-            Spacer()
-            
-        }
-    }
     
     private var FilterView: some View{
         HStack {

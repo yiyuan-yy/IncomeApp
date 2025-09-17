@@ -14,7 +14,7 @@ struct TypePickerView: View {
         Picker("", selection: $draft.type) {
             ForEach(TransactionType.allCases){type in
                 Text(type.rawValue)
-                  
+                    .tag(type)
             }
         }
         .pickerStyle(.menu)
