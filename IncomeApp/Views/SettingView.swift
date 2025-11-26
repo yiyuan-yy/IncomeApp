@@ -16,12 +16,12 @@ struct SettingView: View {
                 Toggle(isOn: $incomeViewModel.sortDescending) {
                     Text("Sort \(incomeViewModel.sortDescending ? "↓" : "↑")")
                 }
-                Picker("Currency", selection: $incomeViewModel.currency) {
+                Picker("Currency", selection: $incomeViewModel.currencyType) {
                     ForEach(Currency.allCases){currency in
                         Text(currency.rawValue + " " + currency.sign)
                     }
                 }
-                Picker("Time Filter", selection:  $incomeViewModel.filterType) {
+                Picker("Time Filter", selection:  $incomeViewModel.dateFilter) {
                     ForEach(DateFilterType.allCases){type in
                         Text(type.name)
                     }

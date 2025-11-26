@@ -25,7 +25,7 @@ struct EditView: View {
         VStack(spacing: 30) {
             
             // Text Field for amount
-            AmountFieldView(draft: $draft, currency: incomeViewModel.currency)
+            AmountFieldView(draft: $draft, currency: incomeViewModel.currencyType)
 
             Divider()
                 .frame(height: 2)       // thickness

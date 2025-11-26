@@ -55,7 +55,7 @@ struct HomeView: View {
                 Section (header: dateInList(key) ){
                     ForEach(incomeViewModel.transactionsInDate(in: key) ?? []){transaction in
                         NavigationLink(destination: EditView( incomeViewModel: incomeViewModel, transactionToEdit: transaction )) {
-                            TransactionCardView(transaction: transaction, currency: incomeViewModel.currency)
+                            TransactionCardView(transaction: transaction, currency: incomeViewModel.currencyType)
                         }
                     }
                     .onDelete { indexSet in
@@ -173,10 +173,10 @@ struct HomeView: View {
     private var FilterView: some View{
         HStack {
             Spacer()
-            Text(incomeViewModel.filterType.name)
+            Text(incomeViewModel.dateFilter.name)
                 .foregroundStyle(.blue)
             Menu {
-                Picker("", selection: $incomeViewModel.filterType) {
+                Picker("", selection: $incomeViewModel.dateFilter) {
                     ForEach(DateFilterType.allCases){type in
                         Text(type.name)
                     }

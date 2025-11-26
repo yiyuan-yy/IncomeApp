@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class TransactionViewModel: ObservableObject {
     @Published private(set) var allTransactions: [Transaction] = TransactionViewModel.example
@@ -13,28 +14,28 @@ class TransactionViewModel: ObservableObject {
     // MARK: - settings
     
     // filtered transactions by date and minimum filter
-    @Published var filterType: DateFilterType = .thisMonth  // time filter
-    @Published var minimumFilter: Double = 0.0     // minimum filter
+    @AppStorage("dateFilter") var dateFilter: DateFilterType = .thisMonth  // time filter
+    @AppStorage("minimumFilter") var minimumFilter: Double = 0.0     // minimum filter
     
     var transactions: [Transaction] {
-        return allTransactions.filter{filterType.shouldInclude(date: $0.date)}.filter{($0.amount ?? 0.0) >= minimumFilter}
+        return allTransactions.filter{dateFilter.shouldInclude(date: $0.date)}.filter{($0.amount ?? 0.0) >= minimumFilter}
     }
     
     // sort order
-    @Published var sortDescending = true
+    @AppStorage("sortDescending") var sortDescending = true
     
     // currency
-    @Published var currency: Currency = .CNY
+    @AppStorage("currency") var currencyType: Currency = .CNY
     
     // MARK: - Computed variables for the balance card
     var balance: String {
-        return String(transactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: currency.rawValue)))
+        return String(transactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: currencyType.rawValue)))
     }
     var totalExpense: String {
-        return String(transactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: currency.rawValue)))
+        return String(transactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: currencyType.rawValue)))
     }
     var totalIncome: String {
-        return String(transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: currency.rawValue)))
+        return String(transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: currencyType.rawValue)))
     }
     
     // MARK: - Transaction List
@@ -115,10 +116,9 @@ class TransactionViewModel: ObservableObject {
 // MARK: - example data
 extension TransactionViewModel {
     static let example: [Transaction] = [
-        Transaction(type: .expense, amount: 1, title: "Lunch"),
-        Transaction(type: .income, amount: 10, title: "gift"),
+        Transaction(type: .expense, amount: 14, title: "Lunch"),
+        Transaction(type: .income, amount: 100, title: "gift"),
         Transaction(type: .expense, amount: 4, title: "snacks")
-        
     ]
 }
 

@@ -27,9 +27,7 @@ extension Transaction {
         return date.formatted(date: .abbreviated, time: .omitted)
         
     }
-//    var formattedAmount: String{
-//        return String( (amount ?? 0.0).formatted(.currency(code: "USD")) )
-//    }
+
     var typeImgName: String{
         return type == .expense ? "arrow.down.right" : "arrow.up.right"
     }
