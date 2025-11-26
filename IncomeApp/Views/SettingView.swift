@@ -21,11 +21,6 @@ struct SettingView: View {
                         Text(currency.rawValue + " " + currency.sign)
                     }
                 }
-                Picker("Time Filter", selection:  $incomeViewModel.dateFilter) {
-                    ForEach(DateFilterType.allCases){type in
-                        Text(type.name)
-                    }
-                }
                 HStack {
                     Text("Minimum Filter")
                     TextField("Minimum Filter", value: $incomeViewModel.minimumFilter, format: .number.grouping(.automatic))

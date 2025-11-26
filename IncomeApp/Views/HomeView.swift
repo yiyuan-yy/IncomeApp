@@ -12,7 +12,6 @@ struct HomeView: View {
     @State private var hideOverview = false
     @State private var showSettingView = false
     
-    
     var body: some View {
         NavigationStack {
             VStack {
@@ -31,7 +30,9 @@ struct HomeView: View {
             }
             .navigationTitle("Income")
             .toolbar{
-                ToolbarItem {
+                ToolbarItemGroup {
+                    FilterView
+                    
                     Button {
                         showSettingView = true
                     } label: {
@@ -171,19 +172,9 @@ struct HomeView: View {
     
     
     private var FilterView: some View{
-        HStack {
-            Spacer()
-            Text(incomeViewModel.dateFilter.name)
-                .foregroundStyle(.blue)
-            Menu {
-                Picker("", selection: $incomeViewModel.dateFilter) {
-                    ForEach(DateFilterType.allCases){type in
-                        Text(type.name)
-                    }
-                }
-            } label: {
-                Image(systemName: "line.3.horizontal.decrease")
-                    .font(Constants.FontSize.subtitle)
+        Picker("", selection: $incomeViewModel.dateFilter) {
+            ForEach(DateFilterType.allCases){type in
+                Text(type.name)
             }
         }
     }
