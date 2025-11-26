@@ -25,7 +25,7 @@ struct EditView: View {
         VStack(spacing: 30) {
             
             // Text Field for amount
-            AmountFieldView(draft: $draft)
+            AmountFieldView(draft: $draft, currency: incomeViewModel.currency)
 
             Divider()
                 .frame(height: 2)       // thickness
@@ -40,7 +40,7 @@ struct EditView: View {
             TextField("Title", text: $draft.title)
                 .padding(.vertical)
                 .textFieldStyle(.roundedBorder)
-                .font(Constants.FontSize.subtitle)
+                .font(Constants.FontSize.dollarSign)
             
             if let old = transactionToEdit{
                 SubmitButtonView(label: "Update") {

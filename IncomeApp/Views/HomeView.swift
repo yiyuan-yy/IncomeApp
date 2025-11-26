@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject var incomeViewModel = TransactionViewModel()
-    @State var hideOverview = false
+    @StateObject private var incomeViewModel = TransactionViewModel()
+    @State private var hideOverview = false
+    @State private var showSettingView = false
+    
     
     var body: some View {
         NavigationStack {
@@ -30,10 +32,20 @@ struct HomeView: View {
             .navigationTitle("Income")
             .toolbar{
                 ToolbarItem {
-                    FilterView
+                    Button {
+                        showSettingView = true
+                    } label: {
+                        Image(systemName: "gear")
+                    }
+
                 }
             }
+            .sheet(isPresented: $showSettingView, content: {
+                SettingView()
+                    .environmentObject(incomeViewModel)
+            })
             .animation(.spring, value: hideOverview)
+            
         }
     }
     
@@ -42,8 +54,8 @@ struct HomeView: View {
             ForEach(incomeViewModel.sortedDateKeys, id: \.self){key in
                 Section (header: dateInList(key) ){
                     ForEach(incomeViewModel.transactionsInDate(in: key) ?? []){transaction in
-                        NavigationLink(destination: EditView(incomeViewModel: incomeViewModel, transactionToEdit: transaction)) {
-                            TransactionCardView(transaction: transaction)
+                        NavigationLink(destination: EditView( incomeViewModel: incomeViewModel, transactionToEdit: transaction )) {
+                            TransactionCardView(transaction: transaction, currency: incomeViewModel.currency)
                         }
                     }
                     .onDelete { indexSet in
@@ -93,7 +105,7 @@ struct HomeView: View {
     private var hiddenOverviewCard: some View{
         VStack {
             HStack {
-                Text("BALANCE US\(incomeViewModel.balance)")
+                Text("BALANCE \(incomeViewModel.balance)")
                     .minimumScaleFactor(Constants.ScaleFactor.textShrink)
                 Spacer()
                 Button {
@@ -124,7 +136,7 @@ struct HomeView: View {
                 }
             }
             HStack {
-                Text("US \(incomeViewModel.balance)")
+                Text(incomeViewModel.balance)
                     .font(Constants.FontSize.dollarSign)
                     .lineLimit(1)
                     .minimumScaleFactor(Constants.ScaleFactor.textShrink)
@@ -134,14 +146,14 @@ struct HomeView: View {
             HStack(spacing: 25) {
                 VStack(alignment:.leading) {
                     Text("EXPENSE")
-                    Text("US\(incomeViewModel.totalExpense)")
+                    Text(incomeViewModel.totalExpense)
                         .lineLimit(1)
                         .minimumScaleFactor(Constants.ScaleFactor.textShrink)
                         .truncationMode(.tail)
                 }
                 VStack(alignment:.leading) {
                     Text("INCOME")
-                    Text("US\(incomeViewModel.totalIncome)")
+                    Text(incomeViewModel.totalIncome)
                         .lineLimit(1)
                         .minimumScaleFactor(Constants.ScaleFactor.textShrink)
                         .truncationMode(.tail)
@@ -180,6 +192,7 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environmentObject(TransactionViewModel())
 }
 
 

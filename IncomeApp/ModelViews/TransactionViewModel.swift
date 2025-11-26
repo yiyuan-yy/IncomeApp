@@ -10,42 +10,54 @@ import Foundation
 class TransactionViewModel: ObservableObject {
     @Published private(set) var allTransactions: [Transaction] = TransactionViewModel.example
     
-    // filtered transactions by date
-    @Published var filterType: DateFilterType = .thisMonth
+    // MARK: - settings
+    
+    // filtered transactions by date and minimum filter
+    @Published var filterType: DateFilterType = .thisMonth  // time filter
+    @Published var minimumFilter: Double = 0.0     // minimum filter
+    
     var transactions: [Transaction] {
-        return allTransactions.filter{filterType.shouldInclude(date: $0.date)}
+        return allTransactions.filter{filterType.shouldInclude(date: $0.date)}.filter{($0.amount ?? 0.0) >= minimumFilter}
     }
     
-    // Computed variables to show the total balance card based on transactions
+    // sort order
+    @Published var sortDescending = true
+    
+    // currency
+    @Published var currency: Currency = .CNY
+    
+    // MARK: - Computed variables for the balance card
     var balance: String {
-        return String(transactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: "USD")))
+        return String(transactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: currency.rawValue)))
     }
     var totalExpense: String {
-        return String(transactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: "USD")))
+        return String(transactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: currency.rawValue)))
     }
     var totalIncome: String {
-        return String(transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: "USD")))
-    }
-    var sortedTransactions: [Transaction]{
-        return transactions.sorted{ $0.date > $1.date}
+        return String(transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: currency.rawValue)))
     }
     
-    // Transaction List
+    // MARK: - Transaction List
     var sortedDateKeys: [String]{
-        return Array(transactions.sorted{$0.date > $1.date}.map { $0.formattedDate }).uniqued()
+        return Array(transactions.sorted{sortDescending ? $0.date > $1.date : $0.date < $1.date}.map { $0.formattedDate }).uniqued()
     }
     
     func transactionsInDate(in date: String) -> [Transaction]?{
-        return transactions.filter{$0.formattedDate == date }.sorted{$0.date>$1.date}
+        return transactions.filter{$0.formattedDate == date }.sorted{sortDescending ? $0.date > $1.date : $0.date < $1.date}
     }
     
-    // Navigation controls
-    @Published var showCreatePage = false
-    @Published var showUpdatePage = false
     
-    // Create a record
+    // MARK: - CRUD of records
+    // Navigation controls
+    @Published var showUpdatePage = false
+    @Published var showCreatePage = false
     @Published var showCreateAlert = false
     @Published var alertMessage = ""
+    
+    // Subscript
+    private func index(of id: Transaction.ID) -> Int? {
+        allTransactions.firstIndex(where: {$0.id == id})
+    }
     
     func validate(_ transaction: Transaction) -> Bool{
         guard let amount = transaction.amount else {
@@ -68,6 +80,7 @@ class TransactionViewModel: ObservableObject {
         }
     }
     
+    // Create a record
     func createTransaction(_ transaction: Transaction){
         if  validate(transaction) {
             allTransactions.append(transaction)
@@ -85,11 +98,6 @@ class TransactionViewModel: ObservableObject {
         }
     }
     
-    // Subscript
-    private func index(of id: Transaction.ID) -> Int? {
-        allTransactions.firstIndex(where: {$0.id == id})
-    }
-    
     // Update a record
     func updateTransaction(old: Transaction, new: Transaction) -> Bool{
         if  validate(old) {
@@ -104,7 +112,7 @@ class TransactionViewModel: ObservableObject {
     }
 }
 
-
+// MARK: - example data
 extension TransactionViewModel {
     static let example: [Transaction] = [
         Transaction(type: .expense, amount: 1, title: "Lunch"),
