@@ -13,7 +13,7 @@ struct TypePickerView: View {
     var body: some View {
         Picker("", selection: $draft.type) {
             ForEach(TransactionType.allCases){type in
-                Text(type.rawValue)
+                Text(type.name)
                     .tag(type)
             }
         }

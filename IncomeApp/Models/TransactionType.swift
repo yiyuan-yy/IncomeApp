@@ -6,11 +6,20 @@
 //
 import Foundation
 
-enum TransactionType: String, CaseIterable, Identifiable{
+enum TransactionType: Int, CaseIterable, Identifiable{
     var id: Self {
         return self
     }
     
-    case income = "Income"
-    case expense = "Expense"
+    case income
+    case expense
+    
+    var name: String{
+        switch self {
+        case .income:
+            return "INCOME"
+        case .expense:
+            return "EXPENSE"
+        }
+    }
 }

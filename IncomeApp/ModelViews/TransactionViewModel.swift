@@ -8,6 +8,20 @@
 import Foundation
 import SwiftUI
 
+/*
+ Core Date Storage
+ 1. Persistence Container -> Entity
+    Object Graph Management
+    Persisitence Store Coodinator
+    Persistence -> SQLite
+ 2. DataManager -> Manage Object Context
+ 3. Create
+ 4. Read -> FetchRequest
+ 5. Update
+ 6. Delete
+ 7. In memory Persistence Store (for Preview)
+ */
+
 class TransactionViewModel: ObservableObject {
     @Published private(set) var allTransactions: [Transaction] = TransactionViewModel.example
     
