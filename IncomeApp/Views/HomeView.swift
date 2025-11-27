@@ -170,7 +170,6 @@ struct HomeView: View {
         .shadow(radius: 8)
     }
     
-    
     private var FilterView: some View{
         Picker("", selection: $incomeViewModel.dateFilter) {
             ForEach(DateFilterType.allCases){type in

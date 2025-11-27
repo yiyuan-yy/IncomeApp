@@ -17,7 +17,7 @@ struct SettingView: View {
                     Text("Sort \(incomeViewModel.sortDescending ? "↓" : "↑")")
                 }
                 Picker("Currency", selection: $incomeViewModel.currencyType) {
-                    ForEach(Currency.allCases){currency in
+                    ForEach(CurrencyType.allCases){currency in
                         Text(currency.rawValue + " " + currency.sign)
                     }
                 }
