@@ -10,7 +10,7 @@ import SwiftUICore
 struct Transaction: Identifiable {
     let id = UUID()
     var type: TransactionType = .expense
-    var amount: Double? = nil
+    var amount: Double = 0.0
     var title: String = ""
     var date: Date = Date()
 }
@@ -18,7 +18,7 @@ struct Transaction: Identifiable {
 //Mark Computed variables
 extension Transaction {
     var number: Double{
-        return  type == .expense ? (amount ?? 0.0) * -1 : (amount ?? 0.0)
+        return  type == .expense ? (amount) * -1 : (amount)
     }
     var formattedDate: String{
 //        let formatter = DateFormatter()

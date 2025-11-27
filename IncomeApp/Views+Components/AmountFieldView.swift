@@ -9,12 +9,12 @@ import SwiftUI
 
 struct AmountFieldView: View {
     @Binding var draft: Transaction
-    var currency: Currency
+    var currency: CurrencyType
     
     var body: some View {
         ZStack {
-            Text(String((draft.amount ?? 0.0).formatted(.currency(code: currency.rawValue))))
-                .foregroundColor(draft.amount != nil ? .white : .black)
+            Text(String((draft.amount).formatted(.currency(code: currency.rawValue))))
+                .foregroundColor(draft.amount != 0.0 ? .white : .black)
             
             TextField("", value: $draft.amount, format: .currency(code: currency.rawValue).grouping(.automatic))
                 .minimumScaleFactor(Constants.ScaleFactor.textShrink)

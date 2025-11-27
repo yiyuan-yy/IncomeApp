@@ -1,9 +1,8 @@
-
 //
-//  AmountFieldView.swift
+//  TypePickerView.swift
 //  IncomeApp
 //
-//  Created by yiyuan hu on 9/16/25.
+//  Created by yiyuan hu on 11/27/25.
 //
 
 import SwiftUI
@@ -13,11 +12,10 @@ struct TypePickerView: View {
     var body: some View {
         Picker("", selection: $draft.type) {
             ForEach(TransactionType.allCases){type in
-                Text(type.name)
+                Text(type.title)
                     .tag(type)
             }
         }
         .pickerStyle(.menu)
     }
 }
-

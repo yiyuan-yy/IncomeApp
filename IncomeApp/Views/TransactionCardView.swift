@@ -8,7 +8,7 @@ import SwiftUI
 
 struct TransactionCardView: View {
     let transaction: Transaction
-    var currency: Currency
+    var currency: CurrencyType
     
     var body: some View {
         VStack {
@@ -22,7 +22,7 @@ struct TransactionCardView: View {
                     HStack{
                         Text(transaction.title)
                         Spacer()
-                        Text(String((transaction.amount ??  0.0).formatted(.currency(code: currency.rawValue)) ))
+                        Text(String((transaction.amount).formatted(.currency(code: currency.rawValue)) ))
                             
                     }
                     .font(Constants.FontSize.subtitle)

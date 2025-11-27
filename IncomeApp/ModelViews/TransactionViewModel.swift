@@ -32,14 +32,14 @@ class TransactionViewModel: ObservableObject {
     @AppStorage("minimumFilter") var minimumFilter: Double = 0.0     // minimum filter
     
     var transactions: [Transaction] {
-        return allTransactions.filter{dateFilter.shouldInclude(date: $0.date)}.filter{($0.amount ?? 0.0) >= minimumFilter}
+        return allTransactions.filter{dateFilter.shouldInclude(date: $0.date)}.filter{$0.amount >= minimumFilter}
     }
     
     // sort order
     @AppStorage("sortDescending") var sortDescending = true
     
     // currency
-    @AppStorage("currency") var currencyType: Currency = .CNY
+    @AppStorage("currency") var currencyType: CurrencyType = .CNY
     
     // MARK: - Computed variables for the balance card
     var balance: String {
@@ -75,12 +75,7 @@ class TransactionViewModel: ObservableObject {
     }
     
     func validate(_ transaction: Transaction) -> Bool{
-        guard let amount = transaction.amount else {
-            showCreateAlert = true
-            alertMessage = "Amount should not be empty!"
-            return false
-        }
-        if amount == 0.0{
+        if transaction.amount == 0.0{
             showCreateAlert = true
             alertMessage = "Amount should not be empty!"
             return false
