@@ -8,16 +8,24 @@
 import SwiftUI
 
 struct EditView: View {
-    @ObservedObject var incomeViewModel: TransactionViewModel
-    @State private var draft: Transaction = Transaction()
-    var transactionToEdit: Transaction? = nil
+    @EnvironmentObject var incomeViewModel: TransactionViewModel
+    @EnvironmentObject var settings: SettingStore
+
+    var transactionToEdit: TransactionItem? = nil
     @Environment(\.dismiss) private var dismiss
     
-    init(incomeViewModel: TransactionViewModel, transactionToEdit: Transaction?) {
-        self.incomeViewModel = incomeViewModel
+    @State private var amount: Double = 0.0
+    @State private var title: String = ""
+    @State private var date: Date = Date()
+    @State private var type: TransactionType = .expense
+    
+    init(transactionToEdit: TransactionItem?) {
         if let transaction = transactionToEdit{
             self.transactionToEdit = transaction
-            self._draft = State(initialValue: transaction)
+            self._amount = State(initialValue: transaction.wrappedAmount)
+            self._date = State(initialValue: transaction.wrappedDate)
+            self._title = State(initialValue: transaction.wrappedTitle)
+            self._type = State(initialValue: transaction.wrappeedType)
         }
     }
     
@@ -25,35 +33,37 @@ struct EditView: View {
         VStack(spacing: 30) {
             
             // Text Field for amount
-            AmountFieldView(draft: $draft, currency: incomeViewModel.currencyType)
+            AmountFieldView(amount: $amount, currency: settings.currencyType)
 
             Divider()
                 .frame(height: 2)       // thickness
                 .background(.lightGrayTheme)
                 
             HStack {
-                TypePickerView(draft: $draft)
-                DatePicker("", selection: $draft.date, displayedComponents: .date)
+                TypePickerView(type: $type)
+                DatePicker("", selection: $date, displayedComponents: .date)
                     .datePickerStyle(.compact)
             }
 
-            TextField("Title", text: $draft.title)
+            TextField("Title", text: $title)
                 .padding(.vertical)
                 .textFieldStyle(.roundedBorder)
                 .font(Constants.FontSize.dollarSign)
             
             if let old = transactionToEdit{
                 SubmitButtonView(label: "Update") {
-                    if incomeViewModel.updateTransaction(old: old, new: draft) {
+                    if incomeViewModel.updateTransaction(old, title: title,
+                                                         amount: amount, type: type,
+                                                         date: date) {
                         dismiss()
                     }
                 }
             } else {
                 SubmitButtonView(label: "Create") {
-                    incomeViewModel.createTransaction(draft)
+                    incomeViewModel.createTransaction(title: title, amount: amount, type: type, date: date)
+                
                 }
             }
-            
         }
         .padding()
         .infoAlert(isPresented: $incomeViewModel.showCreateAlert, message: incomeViewModel.alertMessage)
@@ -64,5 +74,5 @@ struct EditView: View {
 
 
 #Preview {
-    EditView(incomeViewModel: TransactionViewModel(), transactionToEdit: Transaction())
+    EditView(transactionToEdit: nil)
 }

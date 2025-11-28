@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct TypePickerView: View {
-    @Binding var draft: Transaction
+    @Binding var type: TransactionType
+    
     var body: some View {
-        Picker("", selection: $draft.type) {
+        Picker("", selection: $type) {
             ForEach(TransactionType.allCases){type in
                 Text(type.title)
                     .tag(type)

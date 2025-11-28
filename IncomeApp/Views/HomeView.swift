@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var incomeViewModel = TransactionViewModel()
+    @EnvironmentObject var incomeViewModel: TransactionViewModel
+    @EnvironmentObject var settings: SettingStore
     @State private var hideOverview = false
     @State private var showSettingView = false
     
@@ -26,7 +27,7 @@ struct HomeView: View {
                 
             }
             .navigationDestination(isPresented: $incomeViewModel.showCreatePage) {
-                EditView(incomeViewModel: incomeViewModel, transactionToEdit: nil)
+                EditView( transactionToEdit: nil)
             }
             .navigationTitle("Income")
             .toolbar{
@@ -55,8 +56,8 @@ struct HomeView: View {
             ForEach(incomeViewModel.sortedDateKeys, id: \.self){key in
                 Section (header: dateInList(key) ){
                     ForEach(incomeViewModel.transactionsInDate(in: key) ?? []){transaction in
-                        NavigationLink(destination: EditView( incomeViewModel: incomeViewModel, transactionToEdit: transaction )) {
-                            TransactionCardView(transaction: transaction, currency: incomeViewModel.currencyType)
+                        NavigationLink(destination: EditView( transactionToEdit: transaction )) {
+                            TransactionCardView(transaction: transaction, currency: settings.currencyType)
                         }
                     }
                     .onDelete { indexSet in
@@ -171,7 +172,7 @@ struct HomeView: View {
     }
     
     private var FilterView: some View{
-        Picker("", selection: $incomeViewModel.dateFilter) {
+        Picker("", selection: $settings.dateFilter) {
             ForEach(DateFilterType.allCases){type in
                 Text(type.name)
             }
@@ -181,8 +182,15 @@ struct HomeView: View {
 }
 
 #Preview {
+    let settings = SettingStore()
+    let viewModel = TransactionViewModel(settings: settings)
+
     HomeView()
-        .environmentObject(TransactionViewModel())
+        .environmentObject(settings)
+        .environmentObject(viewModel)
 }
+
+
+
 
 
