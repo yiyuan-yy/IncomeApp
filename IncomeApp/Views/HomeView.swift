@@ -44,7 +44,6 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showSettingView, content: {
                 SettingView()
-                    .environmentObject(incomeViewModel)
             })
             .animation(.spring, value: hideOverview)
             

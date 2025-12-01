@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SettingView: View {
-    @EnvironmentObject var incomeViewModel: TransactionViewModel
     @EnvironmentObject var settings: SettingStore
     
     var body: some View {
@@ -19,7 +18,7 @@ struct SettingView: View {
                 }
                 Picker("Currency", selection: $settings.currencyType) {
                     ForEach(CurrencyType.allCases){currency in
-                        Text(currency.rawValue + " " + currency.sign)
+                        Text(currency.title + " " + currency.sign)
                     }
                 }
                 HStack {

@@ -22,7 +22,7 @@ struct TransactionCardView: View {
                     HStack{
                         Text(transaction.wrappedTitle)
                         Spacer()
-                        Text(String((transaction.wrappedAmount).formatted(.currency(code: currency.rawValue)) ))
+                        Text(String((transaction.wrappedAmount).formatted(.currency(code: currency.title)) ))
                             
                     }
                     .font(Constants.FontSize.subtitle)

@@ -13,6 +13,7 @@ struct PersistenceController {
     let container = NSPersistentContainer(name: "IncomeData")
     static let shared = PersistenceController()
     
+    
     private init(inMemory: Bool = false){
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")

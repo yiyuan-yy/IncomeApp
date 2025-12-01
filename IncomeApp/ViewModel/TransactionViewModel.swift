@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
-
 /*
  Core Date Storage
  1. Persistence Container -> Entity
@@ -28,7 +26,7 @@ final class TransactionViewModel: ObservableObject {
     @Published private(set) var transactions: [TransactionItem] = []
     
     private let repository: TransactionRepositoryProtocol
-    @ObservedObject var settings: SettingStore // insert settings
+    @Published var settings: SettingStore // insert settings
     
     init(repository: TransactionRepositoryProtocol = TransactionRepository(),
          settings: SettingStore = SettingStore()
@@ -57,14 +55,15 @@ final class TransactionViewModel: ObservableObject {
     }
     
     // Computed variables for the balance card
+    var currencyCode: String { return settings.currencyType.title }
     var balance: String {
-        return String(shownTransactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: settings.currencyType.rawValue)))
+        return String(shownTransactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: currencyCode)))
     }
     var totalExpense: String {
-        return String(shownTransactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: settings.currencyType.rawValue)))
+        return String(shownTransactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: currencyCode)))
     }
     var totalIncome: String {
-        return String(shownTransactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: settings.currencyType.rawValue)))
+        return String(shownTransactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: currencyCode)))
     }
     
     

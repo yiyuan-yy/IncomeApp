@@ -10,7 +10,7 @@ import SwiftUI
 struct EditView: View {
     @EnvironmentObject var incomeViewModel: TransactionViewModel
     @EnvironmentObject var settings: SettingStore
-
+    
     var transactionToEdit: TransactionItem? = nil
     @Environment(\.dismiss) private var dismiss
     
@@ -19,32 +19,30 @@ struct EditView: View {
     @State private var date: Date = Date()
     @State private var type: TransactionType = .expense
     
-    init(transactionToEdit: TransactionItem?) {
-        if let transaction = transactionToEdit{
-            self.transactionToEdit = transaction
-            self._amount = State(initialValue: transaction.wrappedAmount)
-            self._date = State(initialValue: transaction.wrappedDate)
-            self._title = State(initialValue: transaction.wrappedTitle)
-            self._type = State(initialValue: transaction.wrappeedType)
-        }
-    }
     
     var body: some View {
         VStack(spacing: 30) {
             
             // Text Field for amount
-            AmountFieldView(amount: $amount, currency: settings.currencyType)
-
+            AmountField
+            
             Divider()
                 .frame(height: 2)       // thickness
                 .background(.lightGrayTheme)
-                
+            
             HStack {
-                TypePickerView(type: $type)
+                Picker("", selection: $type) {
+                    ForEach(TransactionType.allCases){type in
+                        Text(type.title)
+                            .tag(type)
+                    }
+                }
+                .pickerStyle(.menu)
+                
                 DatePicker("", selection: $date, displayedComponents: .date)
                     .datePickerStyle(.compact)
             }
-
+            
             TextField("Title", text: $title)
                 .padding(.vertical)
                 .textFieldStyle(.roundedBorder)
@@ -61,14 +59,43 @@ struct EditView: View {
             } else {
                 SubmitButtonView(label: "Create") {
                     incomeViewModel.createTransaction(title: title, amount: amount, type: type, date: date)
-                
+                    
                 }
             }
         }
         .padding()
         .infoAlert(isPresented: $incomeViewModel.showCreateAlert, message: incomeViewModel.alertMessage)
-
+        .onAppear {
+            if let transaction = transactionToEdit{
+                amount = transaction.wrappedAmount
+                title = transaction.wrappedTitle
+                date = transaction.wrappedDate
+                type = transaction.wrappeedType
+            }
+        }
+        
     }
+    
+    private var AmountField: some View{
+        ZStack {
+            Text(String((amount).formatted(.currency(code: settings.currencyType.title))))
+                .foregroundColor(amount != 0.0 ? .white : .black)
+            
+            TextField("", value: $amount, format: .currency(code: settings.currencyType.title).grouping(.automatic))
+                .minimumScaleFactor(Constants.ScaleFactor.textShrink)
+                .textFieldStyle(.plain)
+                .keyboardType(.numberPad)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
+                .lineLimit(1)
+                .multilineTextAlignment(.center)
+            
+        }
+        .font(Constants.FontSize.big)
+        .frame(maxWidth: .infinity)
+        .frame(maxHeight: 30)
+    }
+
 
 }
 
