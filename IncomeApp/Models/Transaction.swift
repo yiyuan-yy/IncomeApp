@@ -9,9 +9,9 @@ import SwiftUICore
 
 struct Transaction: Identifiable {
     let id = UUID()
-    var type: TransactionType = .expense
-    var amount: Double = 0.0
     var title: String = ""
+    var amount: Double = 0.0
+    var type: TransactionType = .expense
     var date: Date = Date()
 }
 

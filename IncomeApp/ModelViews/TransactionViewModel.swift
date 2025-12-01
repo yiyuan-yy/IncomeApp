@@ -9,42 +9,37 @@ import Foundation
 import SwiftUI
 
 class TransactionViewModel: ObservableObject {
-    @Published private(set) var allTransactions: [Transaction] = TransactionViewModel.example
+    @Published private(set) var transactions: [Transaction] = TransactionViewModel.example  //data
+    @Published var settings: SettingStore //setting
     
-    // MARK: - settings
-    
-    // filtered transactions by date and minimum filter
-    @AppStorage("dateFilter") var dateFilter: DateFilterType = .thisMonth  // time filter
-    @AppStorage("minimumFilter") var minimumFilter: Double = 0.0     // minimum filter
-    
-    var transactions: [Transaction] {
-        return allTransactions.filter{dateFilter.shouldInclude(date: $0.date)}.filter{$0.amount >= minimumFilter}
+    init(settings: SettingStore) {
+        self.settings = settings
     }
     
-    // sort order
-    @AppStorage("sortDescending") var sortDescending = true
-    
-    // currency
-    @AppStorage("currency") var currencyType: CurrencyType = .CNY
+    var shownTransactions: [Transaction] {
+        return transactions.filter{settings.dateFilter.shouldInclude(date: $0.date)}.filter{$0.amount >= settings.minimumFilter}
+    }
     
     // MARK: - Computed variables for the balance card
+    var currencyCode: String {settings.currencyType.title}
+    
     var balance: String {
-        return String(transactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: currencyType.rawValue)))
+        return String(shownTransactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: currencyCode)))
     }
     var totalExpense: String {
-        return String(transactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: currencyType.rawValue)))
+        return String(shownTransactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: currencyCode)))
     }
     var totalIncome: String {
-        return String(transactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: currencyType.rawValue)))
+        return String(shownTransactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: currencyCode)))
     }
     
     // MARK: - Transaction List
     var sortedDateKeys: [String]{
-        return Array(transactions.sorted{sortDescending ? $0.date > $1.date : $0.date < $1.date}.map { $0.formattedDate }).uniqued()
+        return Array(shownTransactions.sorted{settings.sortDescending ? $0.date > $1.date : $0.date < $1.date}.map { $0.formattedDate }).uniqued()
     }
     
     func transactionsInDate(in date: String) -> [Transaction]?{
-        return transactions.filter{$0.formattedDate == date }.sorted{sortDescending ? $0.date > $1.date : $0.date < $1.date}
+        return shownTransactions.filter{$0.formattedDate == date }.sorted{settings.sortDescending ? $0.date > $1.date : $0.date < $1.date}
     }
     
     
@@ -57,15 +52,15 @@ class TransactionViewModel: ObservableObject {
     
     // Subscript
     private func index(of id: Transaction.ID) -> Int? {
-        allTransactions.firstIndex(where: {$0.id == id})
+        transactions.firstIndex(where: {$0.id == id})
     }
     
-    func validate(_ transaction: Transaction) -> Bool{
-        if transaction.amount == 0.0{
+    func validate(title: String, amount: Double) -> Bool{
+        if amount == 0.0{
             showCreateAlert = true
             alertMessage = "Amount should not be empty!"
             return false
-        } else if transaction.title == "" {
+        } else if title == "" {
             showCreateAlert = true
             alertMessage = "Title should not be empty!"
             return false
@@ -77,9 +72,9 @@ class TransactionViewModel: ObservableObject {
     }
     
     // Create a record
-    func createTransaction(_ transaction: Transaction){
-        if  validate(transaction) {
-            allTransactions.append(transaction)
+    func createTransaction(title :String, amount: Double, type: TransactionType, date: Date){
+        if  validate(title: title, amount: amount) {
+            transactions.append(Transaction(title: title, amount: amount, type: type, date: date))
             // navigate back to home page
             showCreatePage = false
         }
@@ -90,15 +85,18 @@ class TransactionViewModel: ObservableObject {
         guard let transactionInSection = transactionsInDate(in: dateKey) else {return}
         for index in offsets {
             let toDelete = transactionInSection[index]
-            allTransactions.removeAll{$0.id == toDelete.id}
+            transactions.removeAll{$0.id == toDelete.id}
         }
     }
     
     // Update a record
-    func updateTransaction(old: Transaction, new: Transaction) -> Bool{
-        if  validate(old) {
+    func updateTransaction(_ old: Transaction, title :String, amount: Double, type: TransactionType, date: Date) -> Bool{
+        if  validate(title: title, amount: amount) {
             if let index = index(of: old.id){
-                allTransactions[index] = new
+                transactions[index].title = title
+                transactions[index].amount = amount
+                transactions[index].type = type
+                transactions[index].date = date
                 return true
             } else {
                 return false
@@ -106,14 +104,17 @@ class TransactionViewModel: ObservableObject {
         }
         return false
     }
+    
 }
 
 // MARK: - example data
 extension TransactionViewModel {
     static let example: [Transaction] = [
-        Transaction(type: .expense, amount: 14, title: "Lunch"),
-        Transaction(type: .income, amount: 100, title: "gift"),
-        Transaction(type: .expense, amount: 4, title: "snacks")
+        Transaction(title: "Lunch", amount: 14, type: .expense),
+        Transaction(title: "gift", amount: 100, type: .income),
+        Transaction(title: "snacks", amount: 4, type: .expense),
+        Transaction(title: "yesterday", amount: 15, type: .income, date: Calendar.current.date(byAdding: .day, value: -1, to: Date() )! ),
+        Transaction(title: "tomorrow", amount: 28, type: .expense, date: Calendar.current.date(byAdding: .day, value: 1, to: Date())!)
     ]
 }
 
