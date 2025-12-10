@@ -23,6 +23,7 @@ struct IncomeApp: App {
             HomeView()
                 .environmentObject(settings)
                 .environmentObject(viewModel)
+                .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
         }
     }
 }

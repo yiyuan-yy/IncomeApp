@@ -182,11 +182,12 @@ struct HomeView: View {
 
 #Preview {
     let settings = SettingStore()
-    let viewModel = TransactionViewModel(settings: settings)
+    let viewModel = TransactionViewModel(repository: TransactionRepository(context: PersistenceController.preview.container.viewContext),settings: settings)
 
     HomeView()
         .environmentObject(settings)
         .environmentObject(viewModel)
+        .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
 }
 
 
