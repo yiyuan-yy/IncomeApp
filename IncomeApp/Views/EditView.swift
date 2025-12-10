@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct EditView: View {
-    @ObservedObject var incomeViewModel: TransactionViewModel
+    @EnvironmentObject var incomeViewModel: TransactionViewModel
+    @EnvironmentObject var settings: SettingStore
 
     var transactionToEdit: Transaction? = nil
     @Environment(\.dismiss) private var dismiss
@@ -75,10 +76,10 @@ struct EditView: View {
 
     private var AmountField: some View{
         ZStack {
-            Text(String((amount).formatted(.currency(code: incomeViewModel.currency.title))))
+            Text(String((amount).formatted(.currency(code: settings.currencyType.title))))
                 .foregroundColor(amount != 0.0 ? .white : .black)
             
-            TextField("", value: $amount, format: .currency(code: currency.rawValue).grouping(.automatic))
+            TextField("", value: $amount, format: .currency(code: settings.currencyType.title).grouping(.automatic))
                 .minimumScaleFactor(Constants.ScaleFactor.textShrink)
                 .textFieldStyle(.plain)
                 .keyboardType(.numberPad)
@@ -97,5 +98,5 @@ struct EditView: View {
 
 
 #Preview {
-    EditView(incomeViewModel: TransactionViewModel(), transactionToEdit: Transaction())
+    EditView(transactionToEdit: Transaction())
 }

@@ -15,8 +15,8 @@ enum CurrencyType: Int, CaseIterable, Identifiable {
         case .USD:
             return "USD"
         case .CNY:
-            return ""
-        }CNY
+            return "CNY"
+        }
     }
     
     var sign: String {
