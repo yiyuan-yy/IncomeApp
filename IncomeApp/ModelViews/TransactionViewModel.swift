@@ -50,7 +50,6 @@ class TransactionViewModel: ObservableObject {
     @Published var showCreateAlert = false
     @Published var alertMessage = ""
     
-    // Subscript
     func validate(title: String, amount: Double) -> Bool{
         if amount == 0.0{
             showCreateAlert = true
@@ -83,18 +82,7 @@ class TransactionViewModel: ObservableObject {
             modelContext.delete(items[index])
         }
     }
-    
-    // Update a record
-    func updateTransaction(modelContext: ModelContext, old: Transaction, title :String, amount: Double, type: TransactionType, date: Date) -> Bool{
-        if  validate(title: title, amount: amount) {
-            old.title = title
-            old.amount = amount
-            old.type = type
-            old.date = date
-            return true
-        }
-        return false
-    }
+
     
 }
 

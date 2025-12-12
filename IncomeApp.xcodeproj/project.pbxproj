@@ -32,8 +32,8 @@
 		69D9CD6E2E73F299004E3E49 = {
 			isa = PBXGroup;
 			children = (
-				69D9CD792E73F299004E3E49 /* IncomeApp */,
 				69D9CD782E73F299004E3E49 /* Products */,
+				69D9CD792E73F299004E3E49 /* IncomeApp */,
 			);
 			sourceTree = "<group>";
 		};

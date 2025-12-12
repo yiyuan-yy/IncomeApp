@@ -50,20 +50,29 @@ struct EditView: View {
                 .textFieldStyle(.roundedBorder)
                 .font(Constants.FontSize.dollarSign)
             
-            if let old = transactionToEdit{
-                SubmitButtonView(label: "Update") {
-                    if incomeViewModel.updateTransaction(modelContext: context, old: old, title: title, amount: amount, type: type, date: date) {
+            Button {
+                if let transactionToEdit = transactionToEdit {
+                    if  incomeViewModel.validate(title: title, amount: amount) {
+                        transactionToEdit.title = title
+                        transactionToEdit.amount = amount
+                        transactionToEdit.type = type
+                        transactionToEdit.date = date
                         dismiss()
                     }
-                }
-            } else {
-                SubmitButtonView(label: "Create") {
+                } else {
                     incomeViewModel.createTransaction(modelContext: context, title: title, amount: amount, type: type, date: date)
                 }
+            } label: {
+                Text( (transactionToEdit != nil) ? "Update" : "Create")
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(.borderedProminent)
+            .tint(.primaryTheme)
+
+
             
         }
-        .padding()
+        .padding(.horizontal)
         .infoAlert(isPresented: $incomeViewModel.showCreateAlert, message: incomeViewModel.alertMessage)
         .onAppear {
             if let transaction = transactionToEdit{
@@ -96,9 +105,4 @@ struct EditView: View {
         .frame(maxHeight: 30)
     }
     
-}
-
-
-#Preview {
-    EditView(transactionToEdit: TransactionViewModel.example[0])
 }

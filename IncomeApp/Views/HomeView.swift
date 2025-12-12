@@ -20,14 +20,14 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                balanceCard
+                BalanceCard
                     .padding(.horizontal)
                 
-                transactionsListView
+                TransactionsList
                
                 Spacer()
                 
-                addRecordButton
+                AddRecordButton
                 
             }
             .navigationDestination(isPresented: $incomeViewModel.showCreatePage) {
@@ -36,7 +36,7 @@ struct HomeView: View {
             .navigationTitle("Income")
             .toolbar{
                 ToolbarItemGroup {
-                    FilterView
+                    PeriodPicker
                     
                     Button {
                         showSettingView = true
@@ -55,10 +55,10 @@ struct HomeView: View {
         }
     }
     
-    private var transactionsListView: some View{
+    private var TransactionsList: some View{
         List{
             ForEach(incomeViewModel.sortedDateKeys(for: transactions), id: \.self){key in
-                Section (header: dateInList(key) ){
+                Section (header: DateInList(key) ){
                     ForEach(incomeViewModel.transactionsInDate(for: transactions, in: key) ?? []){transaction in
                         NavigationLink(destination: EditView(transactionToEdit: transaction )) {
                             TransactionCardView(transaction: transaction, currency: settings.currencyType)
@@ -77,7 +77,7 @@ struct HomeView: View {
         .listStyle(.inset)
     }
     
-    private func dateInList(_ date: String) -> some View{
+    private func DateInList(_ date: String) -> some View{
         // a date view
         Text(date)
             .font(Constants.FontSize.body)
@@ -87,7 +87,7 @@ struct HomeView: View {
             .clipShape(RoundedRectangle(cornerRadius: 8))
     }
     
-    private var addRecordButton: some View{
+    private var AddRecordButton: some View{
         HStack{
             Button {
                 incomeViewModel.showCreatePage = true
@@ -101,18 +101,18 @@ struct HomeView: View {
         }
     }
     
-    private var balanceCard: some View{
+    private var BalanceCard: some View{
         VStack{
             if hideOverview {
-                hiddenOverviewCard
+                HiddenBalanceCard
             }
             if !hideOverview {
-                overviewCard
+                FullBalanceCard
             }
         }
     }
     
-    private var hiddenOverviewCard: some View{
+    private var HiddenBalanceCard: some View{
         VStack {
             HStack {
                 Text("BALANCE \(incomeViewModel.balance(for: transactions))")
@@ -134,7 +134,7 @@ struct HomeView: View {
         
     }
     
-    private var overviewCard: some View{
+    private var FullBalanceCard: some View{
         VStack (alignment:.leading, spacing: 10) {
             HStack {
                 Text("BALANCE")
@@ -179,7 +179,7 @@ struct HomeView: View {
         .shadow(radius: 8)
     }
     
-    private var FilterView: some View{
+    private var PeriodPicker: some View{
         Picker("", selection: $settings.dateFilter) {
             ForEach(DateFilterType.allCases){type in
                 Text(type.name)
