@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct EditView: View {
     @EnvironmentObject var incomeViewModel: TransactionViewModel
     @EnvironmentObject var settings: SettingStore
+    @Environment(\.modelContext) private var context
 
     var transactionToEdit: Transaction? = nil
     @Environment(\.dismiss) private var dismiss
@@ -50,13 +52,13 @@ struct EditView: View {
             
             if let old = transactionToEdit{
                 SubmitButtonView(label: "Update") {
-                    if incomeViewModel.updateTransaction(old, title: title, amount: amount, type: type, date: date) {
+                    if incomeViewModel.updateTransaction(modelContext: context, old: old, title: title, amount: amount, type: type, date: date) {
                         dismiss()
                     }
                 }
             } else {
                 SubmitButtonView(label: "Create") {
-                    incomeViewModel.createTransaction(title: title, amount: amount, type: type, date: date)
+                    incomeViewModel.createTransaction(modelContext: context, title: title, amount: amount, type: type, date: date)
                 }
             }
             
@@ -98,5 +100,5 @@ struct EditView: View {
 
 
 #Preview {
-    EditView(transactionToEdit: Transaction())
+    EditView(transactionToEdit: TransactionViewModel.example[0])
 }

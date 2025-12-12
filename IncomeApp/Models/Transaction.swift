@@ -6,26 +6,30 @@
 //
 import Foundation
 import SwiftUICore
+import SwiftData
 
-struct Transaction: Identifiable {
-    let id = UUID()
-    var title: String = ""
-    var amount: Double = 0.0
-    var type: TransactionType = .expense
-    var date: Date = Date()
-}
-
-//Mark Computed variables
-extension Transaction {
+@Model class Transaction {
+    
+    @Attribute(.unique) var id: UUID
+    var title: String
+    var amount: Double
+    var type: TransactionType
+    var date: Date
+    
+    init(title: String, amount: Double, type: TransactionType, date: Date = .now) {
+        self.id = UUID()
+        self.title = title
+        self.amount = amount
+        self.type = type
+        self.date = date
+    }
+    
     var number: Double{
         return  type == .expense ? (amount) * -1 : (amount)
     }
+    
     var formattedDate: String{
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "yyyy-MM-dd"
-//        return formatter.string(from: date)
         return date.formatted(date: .abbreviated, time: .omitted)
-        
     }
 
     var typeImgName: String{
@@ -34,5 +38,6 @@ extension Transaction {
     var typeImgColor: Color{
         return type == .expense ? Color.red : Color.green
     }
+    
+    
 }
-

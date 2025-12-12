@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct IncomeApp: App {
@@ -23,6 +24,7 @@ struct IncomeApp: App {
             HomeView()
                 .environmentObject(settings)
                 .environmentObject(viewModel)
+                .modelContainer(for: [Transaction.self])
         }
     }
 }

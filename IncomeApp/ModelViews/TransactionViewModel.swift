@@ -7,39 +7,39 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
 class TransactionViewModel: ObservableObject {
-    @Published private(set) var transactions: [Transaction] = TransactionViewModel.example  //data
     @Published var settings: SettingStore //setting
     
     init(settings: SettingStore) {
         self.settings = settings
     }
     
-    var shownTransactions: [Transaction] {
-        return transactions.filter{settings.dateFilter.shouldInclude(date: $0.date)}.filter{$0.amount >= settings.minimumFilter}
+    func shownTransactions(for transactions: [Transaction]) -> [Transaction] {
+        return transactions.filter{settings.dateFilter.shouldInclude(date: $0.date)}.filter{$0.amount >= settings.minimumFilter}.sorted{settings.sortDescending ? $0.date > $1.date : $0.date < $1.date}
     }
     
     // MARK: - Computed variables for the balance card
     var currencyCode: String {settings.currencyType.title}
     
-    var balance: String {
-        return String(shownTransactions.map{$0.number}.reduce(0.0,+).formatted(.currency(code: currencyCode)))
+    func balance(for transactions: [Transaction]) -> String {
+        return String(shownTransactions(for: transactions).map{$0.number}.reduce(0.0,+).formatted(.currency(code: currencyCode)))
     }
-    var totalExpense: String {
-        return String(shownTransactions.map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: currencyCode)))
+    func totalExpense(for transactions: [Transaction]) -> String {
+        return String(shownTransactions(for: transactions).map{$0.number}.filter{$0<0}.reduce(0.0, -).formatted(.currency(code: currencyCode)))
     }
-    var totalIncome: String {
-        return String(shownTransactions.map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: currencyCode)))
+    func totalIncome(for transactions: [Transaction]) -> String {
+        return String(shownTransactions(for: transactions).map{$0.number}.filter{$0>0}.reduce(0.0, +).formatted(.currency(code: currencyCode)))
     }
     
     // MARK: - Transaction List
-    var sortedDateKeys: [String]{
-        return Array(shownTransactions.sorted{settings.sortDescending ? $0.date > $1.date : $0.date < $1.date}.map { $0.formattedDate }).uniqued()
+    func sortedDateKeys(for transactions: [Transaction]) -> [String]{
+        return Array(shownTransactions(for: transactions).map { $0.formattedDate }).uniqued()
     }
     
-    func transactionsInDate(in date: String) -> [Transaction]?{
-        return shownTransactions.filter{$0.formattedDate == date }.sorted{settings.sortDescending ? $0.date > $1.date : $0.date < $1.date}
+    func transactionsInDate(for transactions: [Transaction], in date: String) -> [Transaction]?{
+        return shownTransactions(for: transactions).filter{$0.formattedDate == date }
     }
     
     
@@ -51,10 +51,6 @@ class TransactionViewModel: ObservableObject {
     @Published var alertMessage = ""
     
     // Subscript
-    private func index(of id: Transaction.ID) -> Int? {
-        transactions.firstIndex(where: {$0.id == id})
-    }
-    
     func validate(title: String, amount: Double) -> Bool{
         if amount == 0.0{
             showCreateAlert = true
@@ -72,35 +68,30 @@ class TransactionViewModel: ObservableObject {
     }
     
     // Create a record
-    func createTransaction(title :String, amount: Double, type: TransactionType, date: Date){
+    func createTransaction(modelContext: ModelContext, title :String, amount: Double, type: TransactionType, date: Date){
         if  validate(title: title, amount: amount) {
-            transactions.append(Transaction(title: title, amount: amount, type: type, date: date))
-            // navigate back to home page
+            let t = Transaction(title: title, amount: amount, type: type, date: date)
+            modelContext.insert(t)
             showCreatePage = false
         }
     }
     
     // Delete a record
-    func deleteTransaction(at offsets: IndexSet, in dateKey: String){
-        guard let transactionInSection = transactionsInDate(in: dateKey) else {return}
+    func deleteTransaction(modelContext: ModelContext, transactions: [Transaction], at offsets: IndexSet, in dateKey: String){
+        guard let items = transactionsInDate(for: transactions, in: dateKey) else {return}
         for index in offsets {
-            let toDelete = transactionInSection[index]
-            transactions.removeAll{$0.id == toDelete.id}
+            modelContext.delete(items[index])
         }
     }
     
     // Update a record
-    func updateTransaction(_ old: Transaction, title :String, amount: Double, type: TransactionType, date: Date) -> Bool{
+    func updateTransaction(modelContext: ModelContext, old: Transaction, title :String, amount: Double, type: TransactionType, date: Date) -> Bool{
         if  validate(title: title, amount: amount) {
-            if let index = index(of: old.id){
-                transactions[index].title = title
-                transactions[index].amount = amount
-                transactions[index].type = type
-                transactions[index].date = date
-                return true
-            } else {
-                return false
-            }
+            old.title = title
+            old.amount = amount
+            old.type = type
+            old.date = date
+            return true
         }
         return false
     }
