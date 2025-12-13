@@ -191,9 +191,12 @@ struct HomeView: View {
 
 #Preview {
     let settings = SettingStore()
-    HomeView()
+    let previewContainer = PreviewHelper.previewContainer
+    
+    return HomeView()
         .environmentObject(settings)
         .environmentObject(TransactionViewModel(settings: settings))
+        .modelContainer(previewContainer)
 }
 
 

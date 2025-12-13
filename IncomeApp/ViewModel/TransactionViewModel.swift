@@ -86,14 +86,5 @@ class TransactionViewModel: ObservableObject {
     
 }
 
-// MARK: - example data
-extension TransactionViewModel {
-    static let example: [Transaction] = [
-        Transaction(title: "Lunch", amount: 14, type: .expense),
-        Transaction(title: "gift", amount: 100, type: .income),
-        Transaction(title: "snacks", amount: 4, type: .expense),
-        Transaction(title: "yesterday", amount: 15, type: .income, date: Calendar.current.date(byAdding: .day, value: -1, to: Date() )! ),
-        Transaction(title: "tomorrow", amount: 28, type: .expense, date: Calendar.current.date(byAdding: .day, value: 1, to: Date())!)
-    ]
-}
+
 
