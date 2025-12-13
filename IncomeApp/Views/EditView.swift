@@ -48,6 +48,27 @@ struct EditView: View {
                 .textFieldStyle(.roundedBorder)
                 .font(Constants.FontSize.dollarSign)
             
+            Button {
+                if let old = transactionToEdit{
+                        if incomeViewModel.updateTransaction(
+                            old,
+                            title: title,
+                            amount: amount,
+                            type: type,
+                            date: date) {
+                            dismiss()
+                        }
+                } else {
+                    incomeViewModel.createTransaction(
+                        title: title,
+                        amount: amount,
+                        type: type,
+                        date: date)
+                }
+            } label: {
+                Text((transactionToEdit != nil) ? "Update" : "Create")
+            }
+
             if let old = transactionToEdit{
                 SubmitButtonView(label: "Update") {
                     if incomeViewModel.updateTransaction(old, title: title, amount: amount, type: type, date: date) {
