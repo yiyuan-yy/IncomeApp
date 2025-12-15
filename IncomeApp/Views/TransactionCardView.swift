@@ -16,7 +16,7 @@ struct TransactionCardView: View {
                 VStack{
                     Image(systemName: transaction.typeImgName)
                         .font(Constants.FontSize.subtitle)
-                        .foregroundStyle(transaction.typeImgColor)
+                        .foregroundStyle(transaction.type == .expense ? Color.red : Color.green)
                 }
                 VStack {
                     HStack{

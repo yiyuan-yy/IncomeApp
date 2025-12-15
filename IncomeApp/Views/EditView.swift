@@ -49,13 +49,13 @@ struct EditView: View {
                 .font(Constants.FontSize.dollarSign)
             
             Button {
-                if let old = transactionToEdit{
+                if let transactionToEdit = transactionToEdit{
                         if incomeViewModel.updateTransaction(
-                            old,
+                            id: transactionToEdit.id,
                             title: title,
                             amount: amount,
-                            type: type,
-                            date: date) {
+                            type: type, date: date
+                        ) {
                             dismiss()
                         }
                 } else {
@@ -106,9 +106,4 @@ struct EditView: View {
         .frame(maxHeight: 30)
     }
     
-}
-
-
-#Preview {
-    EditView(transactionToEdit: Transaction())
 }

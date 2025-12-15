@@ -6,14 +6,26 @@
 //
 
 import Foundation
-import SwiftUI
+import RealmSwift
+//import SwiftUI
 
 class TransactionViewModel: ObservableObject {
-    @Published private(set) var transactions: [Transaction] = TransactionViewModel.example  //data
+    
+    @Published private(set) var transactions: [Transaction] = []  //data
+    
+    private let repository: TransactionRepositoryProtocol
+    
     @Published var settings: SettingStore //setting
     
-    init(settings: SettingStore) {
+    init(settings: SettingStore, repository: TransactionRepositoryProtocol=TransactionRepository() ){
         self.settings = settings
+        self.repository = repository
+        load()
+    }
+    
+    private func load() {
+        transactions = repository.fetchAll()
+//        print(transactions.map{$0.id})
     }
     
     var shownTransactions: [Transaction] {
@@ -41,7 +53,6 @@ class TransactionViewModel: ObservableObject {
     func transactionsInDate(in date: String) -> [Transaction]?{
         return shownTransactions.filter{$0.formattedDate == date }.sorted{settings.sortDescending ? $0.date > $1.date : $0.date < $1.date}
     }
-    
     
     // MARK: - CRUD of records
     // Navigation controls
@@ -74,9 +85,12 @@ class TransactionViewModel: ObservableObject {
     // Create a record
     func createTransaction(title :String, amount: Double, type: TransactionType, date: Date){
         if  validate(title: title, amount: amount) {
-            transactions.append(Transaction(title: title, amount: amount, type: type, date: date))
+            let transaction = Transaction(id: ObjectId(), title: title, amount: amount, date: date, type: type)
+            print("Added transaction id is \(transaction.id)")
+            repository.add(transaction)
             // navigate back to home page
             showCreatePage = false
+            load()
         }
     }
     
@@ -85,36 +99,22 @@ class TransactionViewModel: ObservableObject {
         guard let transactionInSection = transactionsInDate(in: dateKey) else {return}
         for index in offsets {
             let toDelete = transactionInSection[index]
-            transactions.removeAll{$0.id == toDelete.id}
+            repository.delete(id: toDelete.id)
         }
+        load()
     }
     
     // Update a record
-    func updateTransaction(_ old: Transaction, title :String, amount: Double, type: TransactionType, date: Date) -> Bool{
+    func updateTransaction(id: ObjectId, title :String, amount: Double, type: TransactionType, date: Date) -> Bool{
         if  validate(title: title, amount: amount) {
-            if let index = index(of: old.id){
-                transactions[index].title = title
-                transactions[index].amount = amount
-                transactions[index].type = type
-                transactions[index].date = date
-                return true
-            } else {
-                return false
-            }
+            print("Updated id string is: \(id)")
+            repository.update(id: id, title: title, amount: amount, date: date, type: type)
+            load()
+            return true
+        } else {
+            return false
         }
-        return false
     }
     
-}
-
-// MARK: - example data
-extension TransactionViewModel {
-    static let example: [Transaction] = [
-        Transaction(title: "Lunch", amount: 14, type: .expense),
-        Transaction(title: "gift", amount: 100, type: .income),
-        Transaction(title: "snacks", amount: 4, type: .expense),
-        Transaction(title: "yesterday", amount: 15, type: .income, date: Calendar.current.date(byAdding: .day, value: -1, to: Date() )! ),
-        Transaction(title: "tomorrow", amount: 28, type: .expense, date: Calendar.current.date(byAdding: .day, value: 1, to: Date())!)
-    ]
 }
 
