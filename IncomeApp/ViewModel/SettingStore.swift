@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftUI
+//import SwiftUI
 
 final class SettingStore: ObservableObject {
     private let defaults = UserDefaults.standard

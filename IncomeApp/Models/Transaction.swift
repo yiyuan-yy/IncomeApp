@@ -5,7 +5,7 @@
 //  Created by yiyuan hu on 9/12/25.
 //
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 struct Transaction: Identifiable {
     let id = UUID()

@@ -67,19 +67,10 @@ struct EditView: View {
                 }
             } label: {
                 Text((transactionToEdit != nil) ? "Update" : "Create")
+                    .frame(maxWidth: .infinity)
             }
-
-            if let old = transactionToEdit{
-                SubmitButtonView(label: "Update") {
-                    if incomeViewModel.updateTransaction(old, title: title, amount: amount, type: type, date: date) {
-                        dismiss()
-                    }
-                }
-            } else {
-                SubmitButtonView(label: "Create") {
-                    incomeViewModel.createTransaction(title: title, amount: amount, type: type, date: date)
-                }
-            }
+            .buttonStyle(.borderedProminent)
+            .tint(.primaryTheme)
             
         }
         .padding()
