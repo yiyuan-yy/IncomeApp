@@ -18,7 +18,11 @@ protocol TransactionRepositoryProtocol {
 
 final class TransactionRepository: TransactionRepositoryProtocol {
 
-    private let realm = try! Realm()
+    private let realm: Realm
+    
+    init(realm: Realm = try! Realm()) {
+        self.realm = realm
+    }
 
     func fetchAll() -> [Transaction] {
         realm.objects(TransactionObject.self)

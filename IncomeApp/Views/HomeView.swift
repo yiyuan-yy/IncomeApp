@@ -185,7 +185,7 @@ struct HomeView: View {
     let settings = SettingStore()
     HomeView()
         .environmentObject(settings)
-        .environmentObject(TransactionViewModel(settings: settings))
+        .environmentObject(PreviewFactory.makeViewModel(setting: settings))
 }
 
 
