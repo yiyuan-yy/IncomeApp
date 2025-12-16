@@ -5,7 +5,6 @@
 //  Created by yiyuan hu on 9/12/25.
 //
 import Foundation
-import SwiftUICore
 import SwiftData
 
 @Model class Transaction {
@@ -34,9 +33,6 @@ import SwiftData
 
     var typeImgName: String{
         return type == .expense ? "arrow.down.right" : "arrow.up.right"
-    }
-    var typeImgColor: Color{
-        return type == .expense ? Color.red : Color.green
     }
     
     
